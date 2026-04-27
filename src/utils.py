@@ -4,6 +4,7 @@ import random
 import torch
 import os
 import matplotlib.pyplot as plt
+import joblib
 
 def set_seed(seed: int):
     random.seed(seed)
@@ -84,3 +85,9 @@ def save_model(config, model, epoch, current_metric, optimizer,
         'scheduler': scheduler.state_dict(),
     }, os.path.join(config.paths.path_to_checkpoints, name))
 
+def save_classic_model(config, randomized_search):
+    if not os.path.exists(config.paths.path_to_checkpoints):
+        os.makedirs(config.paths.path_to_checkpoints, exist_ok=True)
+    
+    search_path = config.paths.path_to_checkpoints + '/' + config.general.experiment_name + "randomized_search.joblib"
+    joblib.dump(randomized_search, search_path)
