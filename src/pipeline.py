@@ -6,6 +6,7 @@ from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
@@ -68,7 +69,7 @@ def build_pipeline(ohe_columns, ord_columns, num_columns):
 
 
 param_grid = {
-  'RandomForestClassifier':
+  'RFC':
     
     {
         'models': [RandomForestClassifier(random_state=RANDOM_STATE, class_weight='balanced')],
@@ -83,12 +84,42 @@ param_grid = {
 
     # Словарь для модели LogisticRegression
 
-  'LogisticRegression':
+  'LogR':
     {
-        'models': [LogisticRegression(random_state=RANDOM_STATE, penalty='l1', solver='liblinear')],
-        'models__C': [0.1, 1, 10],
+        'models': [LogisticRegression(random_state=RANDOM_STATE)],
+        'models__solver': ['liblinear', 'lbfgs'],
+        'models__C': [0.01, 0.1, 1, 10, 100],
+        'models__class_weight': [None, 'balanced'],
+        'models__max_iter': [500, 1000, 2000],
         'preprocessor__num': [StandardScaler(), MinMaxScaler(), 'passthrough'],
-        # 'feature_selection__k': [10, 20, 30],
+    },
+  'LogR_l1':
+    {
+        'models': [LogisticRegression(random_state=RANDOM_STATE, penalty='l1')],
+        'models__solver': ['liblinear', 'saga'],
+        'models__C': [0.01, 0.1, 1, 10, 100],
+        'models__class_weight': [None, 'balanced'],
+        'models__max_iter': [500, 1000, 2000],
+        'preprocessor__num': [StandardScaler(), MinMaxScaler(), 'passthrough'],
+    },
+
+  'LogR_elasticnet':
+    {
+        'models': [LogisticRegression(random_state=RANDOM_STATE, solver='saga', penalty='elasticnet')],
+        'models__C': [0.01, 0.1, 1, 10],
+        'models__l1_ratio': [0.0, 0.25, 0.5, 0.75, 1.0],
+        'models__class_weight': [None, 'balanced'],
+        'models__max_iter': [500, 1000, 2000],
+        'preprocessor__num': [StandardScaler(), MinMaxScaler(), 'passthrough'],
+    },
+  
+  'KNN':
+    {
+      'models': [KNeighborsClassifier()],
+      'models__n_neighbors': [3, 5, 7, 9, 11, 15, 21],
+      'models__weights': ['uniform', 'distance'],
+      'models__metric': ['euclidean', 'manhattan', 'minkowski'],
+      'models__p': [1, 2],
     },
 
     # Словарь для модели SVC (Support Vector Classification)
@@ -116,7 +147,7 @@ param_grid = {
   #       # 'feature_selection__k': [10, 20, 30],
   #       'preprocessor__num': [StandardScaler(), MinMaxScaler(), 'passthrough']
   #   },
-  'GradientBoostingClassifier':
+  'GradBC':
     {
         'models': [GradientBoostingClassifier(random_state=RANDOM_STATE)],
         'models__learning_rate': [0.01, 0.1, 0.2],
@@ -129,7 +160,7 @@ param_grid = {
     },
 
     # CatBoost for Classification
-  'CatBoostClassifier':
+  'CatBC':
     {
         'models': [CatBoostClassifier(random_state=RANDOM_STATE, verbose=0)],
         'models__iterations': range(100, 2000, 100),

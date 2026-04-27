@@ -70,7 +70,7 @@ def visualize_confusion_matrix(predictions, ground_truth):
 
 
 
-def save_model(config, model, epoch, current_metric, optimizer, 
+def save_NN_model(config, model, current_metric, optimizer, 
                        name, scheduler):
     '''Save PyTorch model.'''
 
@@ -79,15 +79,16 @@ def save_model(config, model, epoch, current_metric, optimizer,
 
     torch.save({
         'model': model.state_dict(),
-        'epoch': epoch,
+        # 'epoch': epoch,
         'metric': current_metric,
         'optimizer': optimizer.state_dict(),
         'scheduler': scheduler.state_dict(),
     }, os.path.join(config.paths.path_to_checkpoints, name))
 
 def save_classic_model(config, randomized_search):
+    '''Save Classic model.'''
     if not os.path.exists(config.paths.path_to_checkpoints):
         os.makedirs(config.paths.path_to_checkpoints, exist_ok=True)
     
-    search_path = config.paths.path_to_checkpoints + '/' + config.general.experiment_name + "randomized_search.joblib"
+    search_path = config.paths.path_to_checkpoints + '/' + config.training.model_name + '_' + config.general.experiment_name + ".joblib"
     joblib.dump(randomized_search, search_path)

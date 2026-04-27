@@ -9,13 +9,9 @@ def fit(config):
     X_train, X_val, y_train, y_val = get_data()
     
     if config.training.model_name != 'DNN':
-        randomized_search = train(X_train, y_train)
+        train(X_train, y_train)
     else:
         run()
         
-
-
-    
-
 if __name__ == '__main__':
     fit(config)

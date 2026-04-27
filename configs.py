@@ -5,7 +5,7 @@ import torch
 
 config = {
     'general': {
-        'experiment_name': '200e',
+        'experiment_name': 'v1',
         'seed': 0xFACED,
         'num_classes': 2, 
         
@@ -20,7 +20,7 @@ config = {
     },
     
     'training': {
-        'model_name': 'DNN', #from src.pipeline
+        'model_name': 'KNN', #from src.pipeline
         'num_epochs': 200,
         'early_stopping_epochs': 100,
         'lr': 1e-4 / 100,
