@@ -10,3 +10,5 @@ sweetviz
 omegaconf
 nbformat
 scikit-learn
+lightgbm
+catboost

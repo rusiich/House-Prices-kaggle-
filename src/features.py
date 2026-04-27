@@ -52,3 +52,46 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
     X['Fare_log'] = X['Fare'].apply(lambda x: np.log1p(x))
 
     return X
+
+# src/features/schema.py
+
+DROP_COLUMNS = [
+    "PassengerId",
+    # "Name",
+    "Ticket",
+    'Survived'
+    # "Surname",
+]
+
+FORCE_CATEGORICAL = [
+    'Sex',
+    'Embarked',
+    'Cabin',
+    'Pclass',
+    'Is_alone',
+    'Big_family',
+    'Title',
+]
+
+FORCE_NUMERICAL = [
+    'Age',
+    'Fare',
+    'Fare_log',
+    'Parch',
+    'SibSp',
+    'Family',
+    'Fare_per_person',
+    'Age_class',
+    'Fare_class',
+    'Name_length',
+]
+
+FORCE_ORDINAL =[
+   
+]
+
+def get_feature_groups(df):
+    cat_columns = [col for col in df.columns if col in FORCE_CATEGORICAL]
+    ord_columns = [col for col in df.columns if col in FORCE_ORDINAL]
+    num_columns = [col for col in df.columns if col in FORCE_NUMERICAL]
+    return cat_columns, ord_columns,num_columns

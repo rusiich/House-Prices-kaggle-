@@ -36,24 +36,6 @@ def draw_plots(train_losses, val_losses, metrics, lr_changes):
     plt.title('Metric changes')
     plt.show()
 
-def build_confusion_matrix(predictions, ground_truth):
-    """
-    Builds confusion matrix from predictions and ground truth
-
-    predictions: np array of ints, model predictions for all validation samples
-    ground_truth: np array of ints, ground truth for all validation samples
-    
-    Returns:
-    np array of ints, (10,10), counts of samples for predicted/ground_truth classes
-    """
-    
-    confusion_matrix = np.zeros((10,10), dtype='int64')
-
-    
-    for pred, true in zip(predictions, ground_truth):
-        confusion_matrix[pred, true] += 1
-    return confusion_matrix
-
 def visualize_confusion_matrix(predictions, ground_truth):
     """
     Visualizes confusion matrix
@@ -87,18 +69,18 @@ def visualize_confusion_matrix(predictions, ground_truth):
 
 
 
-def save_model(config, model, epoch, current_metric, optimizer, epochs_since_improvement, 
-                       name, scheduler, scaler, best_metric):
+def save_model(config, model, epoch, current_metric, optimizer, 
+                       name, scheduler):
     '''Save PyTorch model.'''
+
+    if not os.path.exists(config.paths.path_to_checkpoints):
+        os.makedirs(config.paths.path_to_checkpoints, exist_ok=True)
 
     torch.save({
         'model': model.state_dict(),
         'epoch': epoch,
         'metric': current_metric,
         'optimizer': optimizer.state_dict(),
-        'epochs_since_improvement': epochs_since_improvement,
         'scheduler': scheduler.state_dict(),
-        'scaler': scaler.state_dict() if scaler is not None else None,
-        'best_metric': best_metric,
     }, os.path.join(config.paths.path_to_checkpoints, name))
 
