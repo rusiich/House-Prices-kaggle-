@@ -1,27 +1,33 @@
 import torch.nn as nn
-from configs import conf
+import torch
 
 class DNN(nn.Module):
-    def __init__(self, input, output=conf.general.num_classes):
+    def __init__(self, input, output=2, p_dropout=0.0):
         super().__init__()
         self.model = nn.Sequential(
             nn.Linear(input, 256),
             nn.BatchNorm1d(256),
-            nn.Relu(),
-            
-            nn.Dropout(0.2),
-            nn.nn.Linear(256, 128),
+            nn.ReLU(),
+
+            nn.Dropout(p_dropout),
+            nn.Linear(256, 128),
             nn.BatchNorm1d(128),
-            nn.Relu(),
+            nn.ReLU(),
 
-            nn.Dropout(0.2),
-            nn.nn.Linear(128, 64),
+            nn.Dropout(p_dropout),
+            nn.Linear(128, 64),
             nn.BatchNorm1d(64),
-            nn.Relu(),
+            nn.ReLU(),
 
-            nn.Dropout(0.2),
-            nn.nn.Linear(128, output),
-        ).to(conf.trtaining.device)
+            nn.Dropout(p_dropout),
+            nn.Linear(64, 32),
+            nn.BatchNorm1d(32),
+            nn.ReLU(),
+
+
+            nn.Dropout(p_dropout),
+            nn.Linear(32, output),
+        ).to('cpu')
 
 
     def forward(self, x):

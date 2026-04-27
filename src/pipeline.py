@@ -137,6 +137,10 @@ param_grid = {
         'models__depth': [4, 6, 8, 10],
         'models__subsample': [0.7, 1.0],
         'preprocessor__num': [StandardScaler(), MinMaxScaler()]
+    },
+    'DNN':
+    {
+      
     }
 }
 
