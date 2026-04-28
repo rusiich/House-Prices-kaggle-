@@ -14,7 +14,8 @@ config = {
         'path_to_train_data': './data/train.csv',
         'path_to_test_data': './data/test.csv',
         'path_to_project': '.',
-        'path_to_checkpoints': './checkpoints' 
+        'path_to_checkpoints': './checkpoints' ,
+        'path_to_submission': './checkpoints/submission', 
 
     },
     

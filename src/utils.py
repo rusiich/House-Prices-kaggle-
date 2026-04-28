@@ -40,38 +40,6 @@ def draw_plots(train_losses, val_losses, metrics, lr_changes):
     plt.title('Metric changes')
     plt.show()
 
-def visualize_confusion_matrix(predictions, ground_truth):
-    """
-    Visualizes confusion matrix
-                     
-    """
-    # Adapted from 
-    # https://stackoverflow.com/questions/2897826/confusion-matrix-with-number-of-classified-misclassified-instances-on-it-python
-    
-
-    predictions = np.asarray(predictions)
-    ground_truth = np.asarray(ground_truth)
-
-    size = max(len(np.unique(predictions)), len(np.unique(ground_truth)))
-    confusion_matrix = np.zeros((size, size), dtype='int64')
-
-    
-    for pred, true in zip(predictions, ground_truth):
-        confusion_matrix[true, pred] += 1
-
-    fig = plt.figure(figsize=(size, size))
-    plt.title("Confusion matrix")
-    plt.ylabel("predicted")
-    plt.xlabel("ground truth")
-    res = plt.imshow(confusion_matrix, cmap='GnBu', interpolation='nearest')
-    cb = fig.colorbar(res)
-    plt.xticks(np.arange(size))
-    plt.yticks(np.arange(size))
-    for i, row in enumerate(confusion_matrix):
-        for j, count in enumerate(row):
-            plt.text(j, i, count, fontsize=14, horizontalalignment='center', verticalalignment='center')
-
-
 
 def save_NN_model(artifact):
     '''Save PyTorch model.'''
