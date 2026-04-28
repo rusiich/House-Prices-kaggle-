@@ -1,6 +1,4 @@
 import  pandas as pd
-from src.features import DROP_COLUMNS
-from sklearn.model_selection import train_test_split
 from src.features import FeatureEngineer, FORCE_CATEGORICAL, FORCE_NUMERICAL, FORCE_ORDINAL
 from src.pipeline import build_preprocessor
 import torch
@@ -22,13 +20,6 @@ def get_data(test_data=False):
     
     return data
 
-    # X_train, X_val, y_train, y_val = train_test_split(
-    #                                     X, 
-    #                                     y, 
-    #                                     test_size=config.training.test_size, 
-    #                                     random_state=config.general.seed, 
-    #                                     stratify=y,
-    #                                     )
 
 def get_loaders(X_train_df, y_train, X_val=None, y_val=None, fe=None, prepr=None, batch_size=config.training.batch_size):
     

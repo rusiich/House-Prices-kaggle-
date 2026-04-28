@@ -5,6 +5,7 @@ import torch
 import os
 import matplotlib.pyplot as plt
 import joblib
+from configs import config
 
 def set_seed(seed: int):
     random.seed(seed)
@@ -72,25 +73,20 @@ def visualize_confusion_matrix(predictions, ground_truth):
 
 
 
-def save_NN_model(config, model, current_metric, optimizer, 
-                       name, scheduler):
+def save_NN_model(artifact):
     '''Save PyTorch model.'''
 
     if not os.path.exists(config.paths.path_to_checkpoints):
         os.makedirs(config.paths.path_to_checkpoints, exist_ok=True)
 
-    torch.save({
-        'model': model.state_dict(),
-        # 'epoch': epoch,
-        'metric': current_metric,
-        'optimizer': optimizer.state_dict(),
-        'scheduler': scheduler.state_dict(),
-    }, os.path.join(config.paths.path_to_checkpoints, name))
+    name = config.training.model_name + '_' + config.general.experiment_name 
+    torch.save( artifact, os.path.join(config.paths.path_to_checkpoints, name))
 
 def save_classic_model(config, randomized_search):
     '''Save Classic model.'''
     if not os.path.exists(config.paths.path_to_checkpoints):
         os.makedirs(config.paths.path_to_checkpoints, exist_ok=True)
-    
-    search_path = config.paths.path_to_checkpoints + '/' + config.training.model_name + '_' + config.general.experiment_name + ".joblib"
+
+    name = config.training.model_name + '_' + config.general.experiment_name 
+    search_path = config.paths.path_to_checkpoints + '/' + name + ".joblib"
     joblib.dump(randomized_search, search_path)

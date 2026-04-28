@@ -1,5 +1,5 @@
 import torch.nn as nn
-import torch
+
 
 class DNN(nn.Module):
     def __init__(self, input, output=2, p_dropout=0.0):
@@ -27,7 +27,7 @@ class DNN(nn.Module):
 
             nn.Dropout(p_dropout),
             nn.Linear(32, output),
-        ).to('cpu')
+        )
 
 
     def forward(self, x):
