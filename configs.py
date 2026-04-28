@@ -19,7 +19,7 @@ config = {
     },
     
     'training': {
-        'model_name': 'KNN', #from src.pipeline
+        'model_name': 'DNN' , #from src.pipeline 'DNN' 'KNN'
         'num_epochs': 10,
         'early_stopping_epochs': 100,
         'lr': 1e-4 / 100,
