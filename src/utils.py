@@ -15,6 +15,8 @@ def set_seed(seed: int):
     torch.backends.cudnn.benchmark = False
     os.environ['PYTHONHASHSEED'] = str(seed)
 
+def get_device():
+    return torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 def draw_plots(train_losses, val_losses, metrics, lr_changes):
 

@@ -1,8 +1,8 @@
 import torch
-from configs import config
+from src.utils import get_device
 
 
-device = config.training.device
+device = get_device()
 
 def compute_accuracy(model, loader):
     """
@@ -22,7 +22,7 @@ def compute_accuracy(model, loader):
             y = y.to(device)
             prediction = model(x)
             _, indices = torch.max(prediction, 1)
-            correct_samples += torch.sum(indices == y)
+            correct_samples += (indices == y).sum().item()
             total_samples += y.shape[0]
     accuracy = float(correct_samples) / total_samples
 

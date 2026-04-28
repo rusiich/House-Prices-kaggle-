@@ -1,5 +1,4 @@
 from omegaconf import OmegaConf
-import torch
 
 #https://github.com/vadimtimakin/Kaggle-Sign-Recognition/blob/main/config.py
 
@@ -21,7 +20,7 @@ config = {
     
     'training': {
         'model_name': 'KNN', #from src.pipeline
-        'num_epochs': 200,
+        'num_epochs': 10,
         'early_stopping_epochs': 100,
         'lr': 1e-4 / 100,
 
@@ -30,6 +29,9 @@ config = {
         'gradient_clipping': False,
         'gradient_accumulation_steps': 8,
         'clip_value': 2,
+
+        'test_size':.2,
+        'batch_size': 64,
         
         'warmup_scheduler': True,
         'warmup_epochs': 5,
@@ -39,7 +41,7 @@ config = {
         'number_of_train_debug_samples': 5000,
         'number_of_val_debug_samples': 1000,
         
-        'device':  "cuda" if torch.cuda.is_available() else "cpu",
+        # 'device':  ,
         'save_best': True,
         'save_last': False,
     },
