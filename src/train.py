@@ -19,7 +19,9 @@ import copy
 
 device = get_device()
 
-def train(X, y):
+def train():
+    X, y = get_data()
+
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=config.general.seed)
     ohe_columns, ord_columns, num_columns = get_feature_groups(X)
     pipe_final = build_pipeline(ohe_columns, ord_columns, num_columns)

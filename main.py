@@ -11,7 +11,7 @@ def fit(config):
 
     
     if config.training.model_name != 'DNN':
-        train(X_train, y_train)
+        train()
     else:
         cv_result = run_NN()
         final_artifact = fit_final_dnn(cv_result)
