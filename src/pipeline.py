@@ -78,8 +78,7 @@ param_grid = {
         'models__min_samples_split': [2, 5],
         'models__min_samples_leaf': [1, 2],
         'models__class_weight': ['balanced', None],
-        # 'feature_selection__k': [10, 20, 30],
-        # 'preprocessor__num': [StandardScaler(), MinMaxScaler(), 'passthrough']
+        'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler(), 'passthrough']
     },
 
     # Словарь для модели LogisticRegression
@@ -91,7 +90,7 @@ param_grid = {
         'models__C': [0.01, 0.1, 1, 10, 100],
         'models__class_weight': [None, 'balanced'],
         'models__max_iter': [500, 1000, 2000],
-        'preprocessor__num': [StandardScaler(), MinMaxScaler(), 'passthrough'],
+        'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler(), 'passthrough'],
     },
   'LogR_l1':
     {
@@ -100,7 +99,7 @@ param_grid = {
         'models__C': [0.01, 0.1, 1, 10, 100],
         'models__class_weight': [None, 'balanced'],
         'models__max_iter': [500, 1000, 2000],
-        'preprocessor__num': [StandardScaler(), MinMaxScaler(), 'passthrough'],
+        'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler(), 'passthrough'],
     },
 
   'LogR_elasticnet':
@@ -110,7 +109,7 @@ param_grid = {
         'models__l1_ratio': [0.0, 0.25, 0.5, 0.75, 1.0],
         'models__class_weight': [None, 'balanced'],
         'models__max_iter': [500, 1000, 2000],
-        'preprocessor__num': [StandardScaler(), MinMaxScaler(), 'passthrough'],
+        'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler(), 'passthrough'],
     },
   
   'KNN':
@@ -129,8 +128,8 @@ param_grid = {
         'models__C': [0.1, 1, 10],
         'models__kernel': ['linear', 'rbf', 'poly'],
         'models__gamma': ['scale', 'auto'],
-        'models__degree': [3, 4],  # for 'poly' kernel
-        # 'preprocessor__num': [StandardScaler(), MinMaxScaler(), 'passthrough']
+        'models__degree': [3, 4],  
+        'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler(), 'passthrough']
     },
 
     # Словарь для модели LightGBM (Gradient Boosting Classifier)
@@ -145,7 +144,7 @@ param_grid = {
   #       'models__min_data_in_leaf': [20, 30],
   #       'models__class_weight': ['balanced',  None],
   #       # 'feature_selection__k': [10, 20, 30],
-  #       'preprocessor__num': [StandardScaler(), MinMaxScaler(), 'passthrough']
+  #       'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler(), 'passthrough']
   #   },
   'GradBC':
     {
@@ -155,8 +154,7 @@ param_grid = {
         'models__max_depth': [3, 5, 10],
         'models__min_samples_split': [2, 5, 10],
         'models__min_samples_leaf': [1, 2, 4],
-        # 'feature_selection__k': [10, 20, 30],  # Пример выбора количества признаков
-        'preprocessor__num': [StandardScaler(), MinMaxScaler(), 'passthrough']
+        'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler(), 'passthrough']
     },
 
     # CatBoost for Classification
@@ -167,7 +165,7 @@ param_grid = {
         'models__learning_rate': [0.01, 0.05, 0.1, 0.2],
         'models__depth': [4, 6, 8, 10],
         'models__subsample': [0.7, 1.0],
-        'preprocessor__num': [StandardScaler(), MinMaxScaler()]
+        'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler()]
     },
     'DNN':
     {

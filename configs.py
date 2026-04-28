@@ -11,10 +11,10 @@ config = {
     },
 
     'paths': {
-        'path_to_train_data': '/Users/ruslan/ML experiiment VADIM/Titanic(kaggle)/data/train.csv',
-        'path_to_test_data': '/Users/ruslan/ML experiiment VADIM/Titanic(kaggle)/data/test.csv',
-        'path_to_project': '/Users/ruslan/ML experiiment VADIM/Titanic(kaggle)/',
-        'path_to_checkpoints': '/Users/ruslan/ML experiiment VADIM/Titanic(kaggle)/checkpoints' 
+        'path_to_train_data': './data/train.csv',
+        'path_to_test_data': './data/test.csv',
+        'path_to_project': '.',
+        'path_to_checkpoints': './checkpoints' 
 
     },
     
