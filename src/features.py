@@ -90,8 +90,5 @@ FORCE_ORDINAL =[
    
 ]
 
-def get_feature_groups(df):
-    cat_columns = [col for col in df.columns if col in FORCE_CATEGORICAL]
-    ord_columns = [col for col in df.columns if col in FORCE_ORDINAL]
-    num_columns = [col for col in df.columns if col in FORCE_NUMERICAL]
-    return cat_columns, ord_columns,num_columns
+def get_feature_groups():
+    return FORCE_CATEGORICAL, FORCE_ORDINAL, FORCE_NUMERICAL

@@ -41,7 +41,7 @@ def draw_plots(train_losses, val_losses, metrics, lr_changes):
     plt.show()
 
 
-def save_NN_model(config, artifact):
+def save_NN_model(artifact):
     """Save PyTorch model."""
     config.paths.path_to_checkpoints.mkdir(parents=True, exist_ok=True)
 
@@ -52,7 +52,7 @@ def save_NN_model(config, artifact):
 
     print(f"NN model saved to: {save_path}")
 
-def save_classic_model(config, randomized_search):
+def save_classic_model(randomized_search):
     '''Save Classic model.'''
     if not os.path.exists(config.paths.path_to_checkpoints):
         os.makedirs(config.paths.path_to_checkpoints, exist_ok=True)

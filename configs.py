@@ -23,7 +23,7 @@ config = {
     },
     
     'training': {
-        'model_name': 'LogR' , #from src.pipeline 'DNN' 'KNN' 'LogR'
+        'model_name': 'RFC' , #from src.pipeline 'DNN' 'RFC' 'KNN' 'LogR'
         'num_epochs': 10,
         'early_stopping_epochs': 100,
         'lr': 1e-4 / 100,

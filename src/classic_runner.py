@@ -3,7 +3,7 @@ from configs import config
 from sklearn.model_selection import StratifiedKFold, RandomizedSearchCV
 from src.pipeline import build_pipeline
 from src.features import get_feature_groups
-from src.pipeline import get_param_grid
+from src.search_spaces import get_param_grid
 import pandas as pd
 from src.utils import save_classic_model,  get_device
 from src.data import get_data
@@ -15,7 +15,7 @@ def train():
     X, y = get_data()
 
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=config.general.seed)
-    ohe_columns, ord_columns, num_columns = get_feature_groups(X)
+    ohe_columns, ord_columns, num_columns = get_feature_groups()
     pipe_final = build_pipeline(ohe_columns, ord_columns, num_columns)
     param_grid = get_param_grid(model_name=config.training.model_name)
 
@@ -41,5 +41,5 @@ def train():
         ['rank_test_score', 'param_models', 'mean_test_score','params']
     ].sort_values('rank_test_score')[:10])
     
-    save_classic_model(config, randomized_search)
+    save_classic_model(randomized_search)
     return randomized_search
