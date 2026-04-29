@@ -12,7 +12,7 @@ def fit(config):
         cv_result = run_NN()
         final_artifact = fit_final_dnn(cv_result)
         submission_df = predict_test_dnn(final_artifact)
-        submission_df.to_csv(config.paths.path_to_submission + '/predictions.csv', index=False)
+        submission_df.to_csv(config.paths.path_to_submission / 'predictions.csv', index=False)
         
         
 if __name__ == '__main__':

@@ -78,7 +78,7 @@ param_grid = {
         'models__min_samples_split': [2, 5],
         'models__min_samples_leaf': [1, 2],
         'models__class_weight': ['balanced', None],
-        'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler(), 'passthrough']
+        'preprocessor__num__scaler': ['passthrough']
     },
 
     # Словарь для модели LogisticRegression

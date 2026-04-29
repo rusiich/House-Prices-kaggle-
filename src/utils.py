@@ -41,20 +41,24 @@ def draw_plots(train_losses, val_losses, metrics, lr_changes):
     plt.show()
 
 
-def save_NN_model(artifact):
-    '''Save PyTorch model.'''
+def save_NN_model(config, artifact):
+    """Save PyTorch model."""
+    config.paths.path_to_checkpoints.mkdir(parents=True, exist_ok=True)
 
-    if not os.path.exists(config.paths.path_to_checkpoints):
-        os.makedirs(config.paths.path_to_checkpoints, exist_ok=True)
+    name = f"{config.training.model_name}_{config.general.experiment_name}.pth"
+    save_path = config.paths.path_to_checkpoints / name
 
-    name = config.training.model_name + '_' + config.general.experiment_name 
-    torch.save( artifact, os.path.join(config.paths.path_to_checkpoints, name))
+    torch.save(artifact, save_path)
+
+    print(f"NN model saved to: {save_path}")
 
 def save_classic_model(config, randomized_search):
     '''Save Classic model.'''
     if not os.path.exists(config.paths.path_to_checkpoints):
         os.makedirs(config.paths.path_to_checkpoints, exist_ok=True)
 
-    name = config.training.model_name + '_' + config.general.experiment_name 
-    search_path = config.paths.path_to_checkpoints + '/' + name + ".joblib"
-    joblib.dump(randomized_search, search_path)
+    name = f"{config.training.model_name}_{config.general.experiment_name}.joblib"
+    model_path = config.paths.path_to_checkpoints / name  
+    joblib.dump(randomized_search, model_path)
+
+    print(f"randomized_search сохранен: {model_path}")

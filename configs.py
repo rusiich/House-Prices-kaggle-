@@ -1,4 +1,7 @@
 from omegaconf import OmegaConf
+from pathlib import Path
+
+BASE_DIR = Path(__file__).resolve().parent
 
 #https://github.com/vadimtimakin/Kaggle-Sign-Recognition/blob/main/config.py
 
@@ -11,16 +14,16 @@ config = {
     },
 
     'paths': {
-        'path_to_train_data': './data/train.csv',
-        'path_to_test_data': './data/test.csv',
-        'path_to_project': '.',
-        'path_to_checkpoints': './checkpoints' ,
-        'path_to_submission': './checkpoints/submission', 
+        'path_to_train_data': BASE_DIR / 'data' / 'train.csv',
+        'path_to_test_data': BASE_DIR / 'data' / 'test.csv',
+        'path_to_project': BASE_DIR,
+        'path_to_checkpoints': BASE_DIR / 'checkpoints' ,
+        'path_to_submission': BASE_DIR / 'checkpoints' / 'submission', 
 
     },
     
     'training': {
-        'model_name': 'DNN' , #from src.pipeline 'DNN' 'KNN'
+        'model_name': 'LogR' , #from src.pipeline 'DNN' 'KNN' 'LogR'
         'num_epochs': 10,
         'early_stopping_epochs': 100,
         'lr': 1e-4 / 100,
