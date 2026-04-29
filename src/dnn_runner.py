@@ -78,10 +78,18 @@ def fit_final_dnn(cv_result):
 
     loader, input_size, fe, prepr = get_loaders(X, y, )
     
-    model = DNN(input=input_size, output=2, p_dropout=0.2).to(device)
+    model = DNN(
+        input=input_size, 
+        output=config.training.output_size, 
+        p_dropout=config.training.p_dropout,
+        ).to(device)
     num_epochs = int(round(cv_result["mean_best_epoch"]))
     loss = nn.CrossEntropyLoss()
-    optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=1e-3)
+    optimizer = torch.optim.Adam(
+        model.parameters(), 
+        lr=config.training.lr, 
+        weight_decay=config.training.weight_decay
+        )
 
 
     for epoch in range(num_epochs):
@@ -140,15 +148,24 @@ def run_NN():
                                                             y_val=y_val_fold
                                                             )
         
-        model = DNN(input=input_size, output=2, p_dropout=0.2).to(device)
+        model = DNN(
+                input=input_size, 
+                output=config.training.output_size, 
+                p_dropout=config.training.p_dropout,
+                ).to(device)
+        
         loss = nn.CrossEntropyLoss()
-        optimizer = torch.optim.Adam(model.parameters(), lr=0.0001, weight_decay=1e-3)
+        optimizer = torch.optim.Adam(
+                            model.parameters(), 
+                            lr=config.training.lr,
+                            weight_decay=config.training.weight_decay,
+                            )
 
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             optimizer,
             mode='max',
-            factor=0.5,
-            patience=10
+            factor=config.training.scheduler_factor,
+            patience=config.training.scheduler_patience
         )
 
         train_result = train_model(

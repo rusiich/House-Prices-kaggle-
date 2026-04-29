@@ -1,9 +1,17 @@
 import torch.nn as nn
+from configs import config
 
 
 class DNN(nn.Module):
-    def __init__(self, input, output=2, p_dropout=0.0):
+    def __init__(
+            self, 
+            input, 
+            output=config.training.output_size, 
+            p_dropout=config.training.p_dropout
+            ):
+
         super().__init__()
+
         self.model = nn.Sequential(
             nn.Linear(input, 256),
             nn.BatchNorm1d(256),
@@ -23,7 +31,6 @@ class DNN(nn.Module):
             nn.Linear(64, 32),
             nn.BatchNorm1d(32),
             nn.ReLU(),
-
 
             nn.Dropout(p_dropout),
             nn.Linear(32, output),

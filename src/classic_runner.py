@@ -23,11 +23,11 @@ def train():
         pipe_final,
         param_grid,
         cv=cv,
-        scoring='accuracy',
+        scoring=config.training.scoring,
         random_state=config.general.seed,
-        n_jobs=-1,
-        verbose=1,
-        n_iter=50
+        n_jobs=config.training.search_n_jobs,
+        verbose=config.training.search_verbose,
+        n_iter=config.training.search_n_iter
     )
     randomized_search.fit(X, y)
 

@@ -4,3 +4,4 @@ __pycache__/
 .env
 .DS_Storecheckpoints/
 checkpoints
+catboost_info
