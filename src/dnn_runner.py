@@ -84,7 +84,8 @@ def fit_final_dnn(cv_result):
         output=config.training.output_size, 
         p_dropout=config.training.p_dropout,
         ).to(device)
-    num_epochs = int(round(cv_result["mean_best_epoch"]))
+    
+    num_epochs = config.training.num_epochs
     loss = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(
         model.parameters(), 

@@ -6,36 +6,29 @@ class DNN(nn.Module):
     def __init__(
             self, 
             input, 
+            num_layers=config.training.num_layers,
             output=config.training.output_size, 
             p_dropout=config.training.p_dropout
             ):
 
         super().__init__()
 
-        self.model = nn.Sequential(
-            nn.Linear(input, 256),
-            nn.BatchNorm1d(256),
-            nn.ReLU(),
+        layers = []
+        inp = input
 
-            nn.Dropout(p_dropout),
-            nn.Linear(256, 128),
-            nn.BatchNorm1d(128),
-            nn.ReLU(),
-
-            nn.Dropout(p_dropout),
-            nn.Linear(128, 64),
-            nn.BatchNorm1d(64),
-            nn.ReLU(),
-
-            nn.Dropout(p_dropout),
-            nn.Linear(64, 32),
-            nn.BatchNorm1d(32),
-            nn.ReLU(),
-
-            nn.Dropout(p_dropout),
-            nn.Linear(32, output),
-        )
-
+        for _ in range(num_layers):
+            out = inp // 2
+            layers.extend([
+                    nn.Linear(inp, out),
+                    nn.BatchNorm1d(out),
+                    nn.ReLU(),
+                    nn.Dropout(p_dropout)
+            ])
+            inp = out
+        
+        layers.append(nn.Linear(inp, output))
+        self.model = nn.Sequential(*layers)
+    
 
     def forward(self, x):
         return self.model(x)

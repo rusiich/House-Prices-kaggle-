@@ -33,14 +33,15 @@ config = {
         'search_n_jobs': -1,
 
         # --- DNN: architecture ---
+        'num_layers': 2, 
         'output_size': 2,
-        'p_dropout': 0.2,
+        'p_dropout': 0.5,
 
         # --- DNN: optimization ---
-        'batch_size': 64,
-        'num_epochs': 10,
-        'lr': 0.0001,
-        'weight_decay': 1e-3,
+        'batch_size': 128,
+        'num_epochs': 100,
+        'lr': 0.001,
+        'weight_decay': 0,
 
         # --- DNN: scheduler / early stopping ---
         'scheduler_factor': 0.5,
