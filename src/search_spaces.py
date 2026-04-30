@@ -5,7 +5,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
-from lightgbm import LGBMClassifier
+# from lightgbm import LGBMClassifier
 from catboost import CatBoostClassifier
 from configs import config
 
@@ -88,19 +88,18 @@ param_grid = {
     },
 
     # Словарь для модели LightGBM (Gradient Boosting Classifier)
-  'LGBMClf':
-    {
-        'models': [LGBMClassifier(random_state=RANDOM_STATE, class_weight='balanced')],
-        'models__num_leaves': [31, 70],
-        'models__max_depth': [5, 10],
-        'models__learning_rate': [0.01, 0.1, 0.2],
-        'models__n_estimators': [50, 100, 200],
-        'models__subsample_for_bin': [200000, 300000],
-        'models__min_data_in_leaf': [20, 30],
-        'models__class_weight': ['balanced',  None],
-        # 'feature_selection__k': [10, 20, 30],
-        'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler(), 'passthrough']
-    },
+#   'LGBMClf':
+#     {
+#         'models': [LGBMClassifier(random_state=RANDOM_STATE, class_weight='balanced')],
+#         'models__num_leaves': [31, 70],
+#         'models__max_depth': [5, 10],
+#         'models__learning_rate': [0.01, 0.1, 0.2],
+#         'models__n_estimators': [50, 100, 200],
+#         'models__subsample_for_bin': [200000, 300000],
+#         'models__min_data_in_leaf': [20, 30],
+#         'models__class_weight': ['balanced',  None],
+#         'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler(), 'passthrough']
+#     },
   'GradBC':
     {
         'models': [GradientBoostingClassifier(random_state=RANDOM_STATE)],

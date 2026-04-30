@@ -5,8 +5,10 @@ from src.pipeline import build_pipeline
 from src.features import get_feature_groups
 from src.search_spaces import get_param_grid
 import pandas as pd
-from src.utils import save_classic_model,  get_device
+from src.utils import save_classic_model,  get_device, log_result
 from src.data import get_data
+from datetime import datetime
+
 
 
 device = get_device()
@@ -41,5 +43,19 @@ def train():
         ['rank_test_score', 'param_models', 'mean_test_score','params']
     ].sort_values('rank_test_score')[:10])
     
+
     save_classic_model(randomized_search)
+
+    record = {
+        "created_at": datetime.now().isoformat(),
+        "experiment_name": config.general.experiment_name,
+        "model_name": config.training.model_name,
+        "score": float(randomized_search.best_score_),
+        "params": str(randomized_search.best_params_),
+        "scoring": config.training.scoring,
+        "seed": config.general.seed,
+    }
+
+    log_result(record)
+
     return randomized_search

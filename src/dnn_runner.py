@@ -2,7 +2,7 @@
 from configs import config
 from sklearn.model_selection import StratifiedKFold
 import pandas as pd
-from src.utils import  save_NN_model, get_device
+from src.utils import  save_NN_model, get_device, log_result
 from src.metrics import compute_accuracy
 import torch
 from src.data import get_data, get_loaders
@@ -10,6 +10,7 @@ from src.model import DNN
 import torch.nn as nn
 import numpy as np
 import copy
+from datetime import datetime
 
 
 
@@ -110,12 +111,12 @@ def fit_final_dnn(cv_result):
         "fe": fe,
         "prepr": prepr,
         "input_size": input_size,
-        "output_size": 2,
-        "p_dropout": 0.2,
+        "output_size": config.training.output_size,
+        "p_dropout": config.training.p_dropout,
     }
 
-
     save_NN_model(artifact)
+
     return artifact
 
 
@@ -203,6 +204,29 @@ def run_NN():
     for fold in fold_results:
         accuracies.append(fold['best_val_accuracy'])
         epochs.append(fold['best_epoch'])
+    
+    dnn_params = {
+        "batch_size": config.training.batch_size,
+        "num_epochs": config.training.num_epochs,
+        "lr": config.training.lr,
+        "weight_decay": config.training.weight_decay,
+        "p_dropout": config.training.p_dropout,
+        "scheduler_factor": config.training.scheduler_factor,
+        "scheduler_patience": config.training.scheduler_patience,
+    }
+    
+    record = {
+        "created_at": datetime.now().isoformat(),
+        "experiment_name": config.general.experiment_name,
+        "model_name": config.training.model_name,
+        "score": np.mean(accuracies),
+        "params": dnn_params,
+        "scoring": config.training.scoring,
+        "seed": config.general.seed,       
+
+    }
+
+    log_result(record)
         
     return {
         "fold_results": fold_results,

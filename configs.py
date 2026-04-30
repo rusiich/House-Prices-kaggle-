@@ -10,7 +10,6 @@ config = {
         'experiment_name': 'v1',
         'seed': 0xFACED,
         'num_classes': 2, 
-        
     },
 
     'paths': {
@@ -19,12 +18,12 @@ config = {
         'path_to_project': BASE_DIR,
         'path_to_checkpoints': BASE_DIR / 'checkpoints' ,
         'path_to_submission': BASE_DIR / 'checkpoints' / 'submission', 
-
+        'path_to_leaderboard': BASE_DIR / 'checkpoints' / 'leaderboard.csv'
     },
     
     'training': {
         # --- Общие ---
-        'model_name': 'LGBMClf',  # from src.pipeline: 'DNN' 'RFC' 'LogR' 'LogR_l1' 'LogR_elasticnet' 'KNN' 'SVC' 'CatBC' 'GradBC' 'LGBMClf'
+        'model_name': 'DNN',  # from src.pipeline: 'DNN' 'RFC' 'LogR' 'LogR_l1' 'LogR_elasticnet' 'KNN' 'SVC' 'CatBC' 'GradBC' 'LGBMClf'
         'test_size': 0.2,
         'scoring': 'accuracy',
 

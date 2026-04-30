@@ -1,5 +1,6 @@
 
 import numpy as np
+import pandas as pd
 import random
 import torch
 import os
@@ -62,3 +63,17 @@ def save_classic_model(randomized_search):
     joblib.dump(randomized_search, model_path)
 
     print(f"randomized_search сохранен: {model_path}")
+
+def log_result(record: dict):
+    
+    record_df = pd.DataFrame([record])
+
+    file_exists =  os.path.exists(config.paths.path_to_leaderboard)
+    
+    record_df.to_csv(
+        config.paths.path_to_leaderboard, 
+        mode='a',
+        header= not file_exists,
+        index=False)
+
+    
