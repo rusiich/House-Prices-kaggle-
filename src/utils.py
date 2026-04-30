@@ -7,6 +7,7 @@ import os
 import matplotlib.pyplot as plt
 import joblib
 from configs import config
+from pathlib import Path
 
 def set_seed(seed: int):
     random.seed(seed)
@@ -16,6 +17,14 @@ def set_seed(seed: int):
     torch.backends.cudnn.deterministic = True
     torch.backends.cudnn.benchmark = False
     os.environ['PYTHONHASHSEED'] = str(seed)
+
+def make_dirs():
+    for path in config.paths.values():
+        p = Path(path)
+
+        if not p.suffix:
+            p.mkdir(parents=True, exist_ok=True)
+
 
 def get_device():
     return torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -44,10 +53,10 @@ def draw_plots(train_losses, val_losses, metrics, lr_changes):
 
 def save_NN_model(artifact):
     """Save PyTorch model."""
-    config.paths.path_to_checkpoints.mkdir(parents=True, exist_ok=True)
+    config.paths.path_to_NN_model.mkdir(parents=True, exist_ok=True)
 
     name = f"{config.training.model_name}_{config.general.experiment_name}.pth"
-    save_path = config.paths.path_to_checkpoints / name
+    save_path = config.paths.path_to_NN_model / name
 
     torch.save(artifact, save_path)
 
@@ -55,11 +64,11 @@ def save_NN_model(artifact):
 
 def save_classic_model(randomized_search):
     '''Save Classic model.'''
-    if not os.path.exists(config.paths.path_to_checkpoints):
-        os.makedirs(config.paths.path_to_checkpoints, exist_ok=True)
+    if not os.path.exists(config.paths.path_to_classic_model):
+        os.makedirs(config.paths.path_to_classic_model, exist_ok=True)
 
     name = f"{config.training.model_name}_{config.general.experiment_name}.joblib"
-    model_path = config.paths.path_to_checkpoints / name  
+    model_path = config.paths.path_to_classic_model / name  
     joblib.dump(randomized_search, model_path)
 
     print(f"randomized_search сохранен: {model_path}")

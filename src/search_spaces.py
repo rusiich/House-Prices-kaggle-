@@ -16,8 +16,8 @@ param_grid = {
     
     {
         'models': [RandomForestClassifier(random_state=RANDOM_STATE, class_weight='balanced')],
-        'models__max_depth': [4, 5, 6],
-        'models__n_estimators': [50, 100, 200],
+        'models__max_depth': [3,  5, 7, 9],
+        'models__n_estimators': [50, 100, 200, 500, 750],
         'models__min_samples_split': [2, 5],
         'models__min_samples_leaf': [1, 2],
         'models__class_weight': ['balanced', None],

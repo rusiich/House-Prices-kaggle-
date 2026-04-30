@@ -11,6 +11,7 @@ import torch.nn as nn
 import numpy as np
 import copy
 from datetime import datetime
+import os
 
 
 
@@ -80,8 +81,8 @@ def fit_final_dnn(cv_result):
     loader, input_size, fe, prepr = get_loaders(X, y, )
     
     model = DNN(
-        input=input_size, 
-        output=config.training.output_size, 
+        input_size=input_size, 
+        output_size=config.training.output_size, 
         p_dropout=config.training.p_dropout,
         ).to(device)
     
@@ -151,8 +152,8 @@ def run_NN():
                                                             )
         
         model = DNN(
-                input=input_size, 
-                output=config.training.output_size, 
+                input_size=input_size, 
+                output_size=config.training.output_size, 
                 p_dropout=config.training.p_dropout,
                 ).to(device)
         
@@ -209,6 +210,7 @@ def run_NN():
     dnn_params = {
         "batch_size": config.training.batch_size,
         "num_epochs": config.training.num_epochs,
+        "num_layers": config.training.num_layers,
         "lr": config.training.lr,
         "weight_decay": config.training.weight_decay,
         "p_dropout": config.training.p_dropout,
@@ -250,8 +252,8 @@ def predict_test_dnn(artifact):
     X = torch.tensor(X, dtype=torch.float32).to(device)
 
     model = DNN(
-        input=artifact["input_size"], 
-        output=artifact["output_size"], 
+        input_size=artifact["input_size"], 
+        output_size=artifact["output_size"], 
         p_dropout=artifact["p_dropout"]
         ).to(device)
     
@@ -267,6 +269,11 @@ def predict_test_dnn(artifact):
         "Survived": preds.astype(int),
     })
 
+    if not os.path.exists(config.paths.path_to_submission):
+        os.makedirs(config.paths.path_to_submission, exist_ok=True)
+        
+    name = f"{config.training.model_name}_{config.general.experiment_name}_prediction.csv"
+    submission_df.to_csv(config.paths.path_to_submission / name, index=False)
     return submission_df
 
 

@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent
 
 config = {
     'general': {
-        'experiment_name': 'v1',
+        'experiment_name': 'baseline',
         'seed': 0xFACED,
         'num_classes': 2, 
     },
@@ -18,7 +18,9 @@ config = {
         'path_to_project': BASE_DIR,
         'path_to_checkpoints': BASE_DIR / 'checkpoints' ,
         'path_to_submission': BASE_DIR / 'checkpoints' / 'submission', 
-        'path_to_leaderboard': BASE_DIR / 'checkpoints' / 'leaderboard.csv'
+        'path_to_leaderboard': BASE_DIR / 'checkpoints' / 'leaderboard.csv',
+        'path_to_NN_model': BASE_DIR / 'checkpoints' / 'DNN_models',
+        'path_to_classic_model': BASE_DIR / 'checkpoints' / 'Classic_models',
     },
     
     'training': {
@@ -28,7 +30,7 @@ config = {
         'scoring': 'accuracy',
 
         # --- Search / CV ---
-        'search_verbose': 1,
+        'search_verbose': 3,
         'search_n_iter': 50,
         'search_n_jobs': -1,
 
@@ -40,7 +42,7 @@ config = {
         # --- DNN: optimization ---
         'batch_size': 128,
         'num_epochs': 100,
-        'lr': 0.001,
+        'lr': 0.01,
         'weight_decay': 0,
 
         # --- DNN: scheduler / early stopping ---

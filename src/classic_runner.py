@@ -8,6 +8,7 @@ import pandas as pd
 from src.utils import save_classic_model,  get_device, log_result
 from src.data import get_data
 from datetime import datetime
+import os
 
 
 
@@ -59,3 +60,21 @@ def train():
     log_result(record)
 
     return randomized_search
+
+def predict_test(randomized_search):
+    test_df = get_data(test_data=True)
+    passenger_ids = test_df["PassengerId"]
+
+    best_model = randomized_search.best_estimator_
+    y_pred = best_model.predict(test_df)
+
+    submission_df = pd.DataFrame({
+        "PassengerId": passenger_ids,
+        "Survived": y_pred,
+    })
+    if not os.path.exists(config.paths.path_to_submission):
+        os.makedirs(config.paths.path_to_submission, exist_ok=True)
+        
+    name = f"{config.training.model_name}_{config.general.experiment_name}_prediction.csv"
+    submission_df.to_csv(config.paths.path_to_submission / name, index=False)
+    return submission_df
