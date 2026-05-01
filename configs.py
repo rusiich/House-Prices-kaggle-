@@ -25,12 +25,13 @@ config = {
     
     'training': {
         # --- Общие ---
-        'model_name': 'DNN',  # from src.pipeline: 'DNN' 'RFC' 'LogR' 'LogR_l1' 'LogR_elasticnet' 'KNN' 'SVC' 'CatBC' 'GradBC' 'LGBMClf'
+        'model_name': 'Ensemble_AVG',  # from src.pipeline: 'DNN' 'RFC' 'LogR' 'LogR_l1' 'LogR_elasticnet' 'KNN' 'SVC' 'CatBC' 'GradBC' 'LGBMClf'
         'test_size': 0.2,
         'scoring': 'accuracy',
+        'training_all_models':False,
 
         # --- Search / CV ---
-        'search_verbose': 3,
+        'search_verbose': 1,
         'search_n_iter': 50,
         'search_n_jobs': -1,
 

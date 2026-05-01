@@ -125,6 +125,7 @@ def fit_final_dnn(cv_result):
  
 
 def run_NN():
+    print('start DNN model training')
     X, y = get_data()
 
     skf = StratifiedKFold(

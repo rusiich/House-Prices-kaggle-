@@ -15,6 +15,7 @@ import os
 device = get_device()
 
 def train():
+    print(f"start training {config.training.model_name}")
     X, y = get_data()
 
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=config.general.seed)
@@ -58,6 +59,7 @@ def train():
     }
 
     log_result(record)
+    predict_test(randomized_search)
 
     return randomized_search
 

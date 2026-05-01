@@ -77,15 +77,15 @@ param_grid = {
     },
 
     # Словарь для модели SVC (Support Vector Classification)
-  'SVC':
-    {
-        'models': [SVC()],
-        'models__C': [0.1, 1, 10],
-        'models__kernel': ['linear', 'rbf', 'poly'],
-        'models__gamma': ['scale', 'auto'],
-        'models__degree': [3, 4],  
-        'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler(), 'passthrough']
-    },
+#   'SVC':
+#     {
+#         'models': [SVC()],
+#         'models__C': [0.1, 1, 10],
+#         'models__kernel': ['linear', 'rbf', 'poly'],
+#         'models__gamma': ['scale', 'auto'],
+#         'models__degree': [3, 4],  
+#         'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler(), 'passthrough']
+#     },
 
     # Словарь для модели LightGBM (Gradient Boosting Classifier)
 #   'LGBMClf':
