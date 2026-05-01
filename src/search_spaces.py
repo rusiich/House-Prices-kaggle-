@@ -2,7 +2,7 @@
 from sklearn.ensemble import RandomForestClassifier, GradientBoostingClassifier
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.linear_model import LogisticRegression
-from sklearn.svm import SVC
+# from sklearn.svm import SVC
 from sklearn.preprocessing import StandardScaler, MinMaxScaler
 
 # from lightgbm import LGBMClassifier
