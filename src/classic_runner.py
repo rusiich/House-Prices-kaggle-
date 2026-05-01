@@ -9,6 +9,7 @@ from src.utils import save_classic_model,  get_device, log_result
 from src.data import get_data
 from datetime import datetime
 import os
+import wandb
 
 
 
@@ -16,6 +17,18 @@ device = get_device()
 
 def train():
     print(f"start training {config.training.model_name}")
+    if config.logging.use_wandb:
+        wandb.init(
+            project=config.logging.wandb_project_name,
+            name=f"{config.training.model_name}_{config.general.experiment_name}",
+            mode="offline",
+            config={
+                "model_name": config.training.model_name,
+                "seed": config.general.seed,
+            }
+        )
+        print("wandb run started")
+
     X, y = get_data()
 
     cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=config.general.seed)
@@ -60,6 +73,12 @@ def train():
 
     log_result(record)
     predict_test(randomized_search)
+
+    if config.logging.use_wandb:
+        wandb.log({
+            "cv_best_score": float(randomized_search.best_score_),
+        })
+        wandb.finish()
 
     return randomized_search
 

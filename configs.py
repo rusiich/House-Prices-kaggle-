@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent
 
 config = {
     'general': {
-        'experiment_name': 'baseline',
+        'experiment_name': 'v2',
         'seed': 0xFACED,
         'num_classes': 2, 
     },
@@ -28,15 +28,15 @@ config = {
         'model_name': 'Ensemble_AVG',  # from src.pipeline: 'DNN' 'RFC' 'LogR' 'LogR_l1' 'LogR_elasticnet' 'KNN' 'SVC' 'CatBC' 'GradBC' 'LGBMClf'
         'test_size': 0.2,
         'scoring': 'accuracy',
-        'training_all_models':False,
+        'training_all_models':True,
 
         # --- Search / CV ---
         'search_verbose': 1,
         'search_n_iter': 50,
-        'search_n_jobs': -1,
+        'search_n_jobs': 3,
 
         # --- DNN: architecture ---
-        'num_layers': 2, 
+        'num_layers': 3, 
         'output_size': 2,
         'p_dropout': 0.5,
 
@@ -48,7 +48,7 @@ config = {
 
         # --- DNN: scheduler / early stopping ---
         'scheduler_factor': 0.5,
-        'scheduler_patience': 10,
+        'scheduler_patience': 20,
         'early_stopping_epochs': 100,
 
         # --- DNN: advanced training ---
@@ -72,6 +72,12 @@ config = {
         'save_best': True,
         'save_last': False,
     },
+
+    'logging': {
+        'use_wandb': False,
+        'wandb_project_name': 'titanic',
+        'entity': None,
+    }
 }
 
 config = OmegaConf.create(config)

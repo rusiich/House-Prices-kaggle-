@@ -15,10 +15,10 @@ def fit(config):
                 train()
             elif config.training.model_name != 'Ensemble_AVG':
                 models_name = [
-                'CatBC_baseline',
-                    'LogR_baseline',
-                    'KNN_baseline',
-                    'RFC_baseline',
+                    'CatBC_v1',
+                    'LogR_v1',
+                    'KNN_v1',
+                    'RFC_v1',
                 ]
 
                 average_proba_ensemble(models_name)

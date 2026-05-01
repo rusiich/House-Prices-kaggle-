@@ -8,6 +8,8 @@ import matplotlib.pyplot as plt
 import joblib
 from configs import config
 from pathlib import Path
+import seaborn as sns
+import phik
 
 def set_seed(seed: int):
     random.seed(seed)
@@ -85,4 +87,13 @@ def log_result(record: dict):
         header= not file_exists,
         index=False)
 
-    
+
+def draw_phik_matrix(df, drop_columns=None):
+    num_columns =  df.select_dtypes(include='number').columns.tolist()
+    df = df[num_columns]
+    plt.figure(figsize=(25, 25))
+    if drop_columns is not None:
+        df = df.drop(drop_columns, axis=1)
+    sns.heatmap(df.phik_matrix(interval_cols=num_columns, bins=20), annot=True, fmt='.2f')
+    plt.title('Матрица корреляции')
+    plt.show()    

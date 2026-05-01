@@ -86,7 +86,7 @@ def fit_final_dnn(cv_result):
         p_dropout=config.training.p_dropout,
         ).to(device)
     
-    num_epochs = config.training.num_epochs
+    num_epochs = round(cv_result["mean_best_epoch"])
     loss = nn.CrossEntropyLoss()
     optimizer = torch.optim.Adam(
         model.parameters(), 
@@ -210,7 +210,7 @@ def run_NN():
     
     dnn_params = {
         "batch_size": config.training.batch_size,
-        "num_epochs": config.training.num_epochs,
+        "mean_best_epoch": np.mean(epochs),
         "num_layers": config.training.num_layers,
         "lr": config.training.lr,
         "weight_decay": config.training.weight_decay,
