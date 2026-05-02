@@ -3,29 +3,28 @@ import numpy as np
 import pandas as pd
 
 class FeatureEngineer(BaseEstimator, TransformerMixin):
-    def __init__(self):
-        self.title_mapping = {
-            "Mr": "Mr",
-            "Miss": "Miss",
-            "Mrs": "Mrs",
-            "Master": "Master",
-            "Dr": "Doctor",
-            "Rev": "Religious",
-            "Col": "Military",
-            "Major": "Military",
-            "Capt": "Military",
-            "Sir": "Nobility",
-            "Lady": "Nobility",
-            "Countess": "Nobility",
-            "Jonkheer": "Nobility",
-            "Don": "Nobility",
-            "Mlle": "Miss",
-            "Mme": "Mrs",
-        }
+    TITLE_MAPPING = {
+        "Mr": "Mr",
+        "Miss": "Miss",
+        "Mrs": "Mrs",
+        "Master": "Master",
+        "Dr": "Doctor",
+        "Rev": "Religious",
+        "Col": "Military",
+        "Major": "Military",
+        "Capt": "Military",
+        "Sir": "Nobility",
+        "Lady": "Nobility",
+        "Countess": "Nobility",
+        "Jonkheer": "Nobility",
+        "Don": "Nobility",
+        "Mlle": "Miss",
+        "Mme": "Mrs",
+    }
 
     def _extract_title(self, X):
         title = X['Name'].str.extract(r' ([A-Za-z]+)\.', expand=False)
-        title = title.replace(self.title_mapping)
+        title = title.replace(self.TITLE_MAPPING)
         return title
 
     def fit(self, X, y=None):
@@ -52,7 +51,11 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
         X['Age_was_missing'] = X['Age'].isna().astype(int)
         X['Age'] = X['Age'].fillna(X['Title'].map(self.title_age_medians_))
         X['Age'] = X['Age'].fillna(self.age_median_)
-        X['AgeGroup'] = pd.cut(X['Age'], bins=[0, 12, 18, 35, 50, 65, 100], labels=['Child', 'Teen', 'YoungAdult', 'Adult', 'MiddleAged', 'Senior'])
+        X['AgeGroup'] = pd.cut(
+            X['Age'],
+            bins=[0, 12, 18, 35, 50, 65, 100],
+            labels=['Child', 'Teen', 'YoungAdult', 'Adult', 'MiddleAged', 'Senior']
+        )
 
         X['WomanOrChild'] = ((X['Sex'] == 'female') | (X['Age'] < 12)).astype(int)
 

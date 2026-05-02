@@ -96,4 +96,4 @@ def draw_phik_matrix(df, drop_columns=None):
         df = df.drop(drop_columns, axis=1)
     sns.heatmap(df.phik_matrix(interval_cols=num_columns, bins=20), annot=True, fmt='.2f')
     plt.title('Матрица корреляции')
-    plt.show()    
+    plt.show()

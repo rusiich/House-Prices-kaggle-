@@ -3,22 +3,22 @@ from src.utils import set_seed, make_dirs
 from src.classic_runner import train
 from src.dnn_runner import  run_NN, fit_final_dnn, predict_test_dnn
 from src.search_spaces import param_grid
-from src.ensemble import average_proba_ensemble
+from src.ensemble import average_proba_ensemble, voting_ensemble
 
 def fit(config):
     set_seed(config.general.seed)
     make_dirs()
-    if config.training.training_all_models:
+    if config.training.model_name == 'All':
         for model_name in param_grid:
             config.training.model_name = model_name
             if config.training.model_name != 'DNN':
                 train()
             elif config.training.model_name != 'Ensemble_AVG':
                 models_name = [
-                    'CatBC_v1',
-                    'LogR_v1',
-                    'KNN_v1',
-                    'RFC_v1',
+                    'CatBC_v2',
+                    'LogR_v2',
+                    'KNN_v2',
+                    'RFC_v2',
                 ]
 
                 average_proba_ensemble(models_name)
@@ -29,12 +29,22 @@ def fit(config):
     else:
         if config.training.model_name == 'Ensemble_AVG':
             models_name = [
-            'CatBC_baseline',
-            'LogR_baseline',
-            'KNN_baseline',
-            'RFC_baseline',
+                'CatBC_v2',
+                'LogR_v2',
+                'KNN_v2',
+                'RFC_v2',
             ]
             average_proba_ensemble(models_name)
+        elif config.training.model_name == 'Ensemble_voting':
+            models_name=[
+                'CatBC_v2',
+                'LogR_v2',
+                'KNN_v2',
+                'RFC_v2',
+                'DNN_v2',
+                'GradBC_v2',
+            ]
+            voting_ensemble(models_name)
         elif config.training.model_name != 'DNN':
             train()
         else:
