@@ -4,65 +4,123 @@
 
 Репозиторий объединяет:
 - классические ML-модели через `Pipeline + ColumnTransformer + RandomizedSearchCV`;
-- отдельную DNN-ветку с кросс-валидацией, финальным дообучением на всём train и предсказанием на test;
-- простой ансамбль усреднением вероятностей;
-- сохранение моделей, submission-файлов и таблицы результатов.
+- отдельную DNN-ветку на PyTorch с кросс-валидацией, финальным обучением на всём train и предсказанием на test;
+- ансамбли: усреднение вероятностей и voting;
+- сохранение классических моделей и DNN-артефактов;
+- таблицу результатов (`leaderboard.csv`) и ноутбуки с экспериментами.
+
+---
+
+## Результаты
+
+Текущие результаты и история запусков хранятся в:
+- `checkpoints/leaderboard.csv`
+- `notebooks/EDA_RESULTS.ipynb`
+
+### Лучший результат
+- Лучший публичный Kaggle score: **`79,18`**
+- Лучшая версия DNN: **`DNN_v2`**
+- После перехода от `v1` к `v2` был добавлен дополнительный feature engineering, что дало прирост примерно **на 1 пункт**.
+
+---
 
 ## Что умеет проект
 
-### Classic ML
-Поддерживается обучение и предсказание для моделей из `search_spaces.py`, которые выбираются через `config.training.model_name`.
+### 1. Classic ML
+Поддерживается обучение и предсказание для классических моделей, заданных в `src/search_spaces.py` и выбираемых через `config.training.model_name`.
 
 Основная логика:
-1. чтение данных;
-2. feature engineering;
+1. чтение train/test;
+2. feature engineering через `FeatureEngineer`;
 3. preprocessing через `ColumnTransformer`;
 4. подбор гиперпараметров через `RandomizedSearchCV`;
 5. сохранение лучшей модели;
 6. предсказание на test и запись submission.
 
-### DNN
+Поддерживаемые classic-модели:
+- `RFC`
+- `LogR`
+- `LogR_l1`
+- `LogR_elasticnet`
+- `KNN`
+- `SVC`
+- `CatBC`
+- `GradBC`
+- `LGBMClf`
+
+### 2. DNN
 Для нейросети реализован отдельный pipeline:
 1. `StratifiedKFold` на train;
 2. обучение модели на каждом фолде;
-3. сбор средней CV-метрики;
+3. сбор CV-метрик;
 4. финальное обучение на всём train;
 5. предсказание на test и запись submission.
 
-### Ensemble
-Поддерживается ансамбль усреднением вероятностей нескольких уже обученных classic ML-моделей.
+### 3. Ансамбли
+Поддерживаются:
+- `average_proba_ensemble` — усреднение вероятностей нескольких моделей;
+- `voting_ensemble` — voting-ансамбль.
+
+---
 
 ## Структура проекта
 
 ```text
 Titanic/
-├── checkpoints/              # сохранённые модели, submission, leaderboard
-├── data/                     # train.csv и test.csv
-├── notebooks/                # черновые эксперименты
+├── checkpoints/
+│   ├── Classic_models/        # сохранённые classic ML модели
+│   ├── DNN_models/            # сохранённые DNN артефакты
+│   ├── submission/            # submission-файлы
+│   └── leaderboard.csv        # лог результатов экспериментов
+├── data/
+│   ├── train.csv
+│   └── test.csv
+├── notebooks/
+│   ├── EDA_RESULTS.ipynb
+│   ├── result.ipynb
+│   ├── project_all_in_one.ipynb
+│   ├── df_report.html
+│   └── df_fe_report.html
 ├── src/
-│   ├── classic_runner.py     # обучение classic ML
-│   ├── dnn_runner.py         # CV + финальное обучение DNN + inference
-│   ├── data.py               # чтение данных и DataLoader'ы
-│   ├── ensemble.py           # усреднение вероятностей
-│   ├── features.py           # feature engineering
-│   ├── metrics.py            # метрики
-│   ├── model.py              # архитектура DNN
-│   ├── pipeline.py           # sklearn preprocessing pipeline
-│   ├── search_spaces.py      # search space для classic ML
-│   └── utils.py              # утилиты, seed, сохранение, логирование
+│   ├── classic_runner.py      # обучение classic ML и submission
+│   ├── data.py                # чтение данных и DataLoader'ы
+│   ├── dnn_runner.py          # CV + final fit + inference для DNN
+│   ├── ensemble.py            # averaging / voting ансамбли
+│   ├── features.py            # FeatureEngineer
+│   ├── metrics.py             # метрики
+│   ├── model.py               # архитектура DNN
+│   ├── pipeline.py            # preprocessing pipeline
+│   ├── schema.py              # схемы признаков
+│   ├── search_spaces.py       # search spaces для classic ML
+│   └── utils.py               # сохранение, загрузка, seed, dirs, логирование
 ├── cheklist.md
 ├── configs.py
 ├── main.py
+├── README.md
 └── requirements.txt
 ```
 
-## Установка
+---
 
-```bash
-python -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-```
+## Feature Engineering
+
+Feature engineering реализован через кастомный sklearn-трансформер `FeatureEngineer`.
+
+В проекте используются признаки, основанные на исходных полях Titanic, например:
+- `Family`
+- `Is_alone`
+- `Big_family`
+- `Title`
+- `Fare_per_person`
+- `Age_class`
+- `Fare_class`
+- `Name_length`
+- `Fare_log`
+- и другие признаки, создаваемые внутри пайплайна
+
+Это позволяет использовать одну и ту же логику преобразований как в classic ML, так и в DNN-ветке.
+
+---
 
 ## Конфиг
 
@@ -72,121 +130,132 @@ pip install -r requirements.txt
 - `config.general.experiment_name` — имя эксперимента;
 - `config.general.seed` — seed;
 - `config.training.model_name` — какую модель запускать;
-- `config.training.training_all_models` — обучать все модели подряд или только одну;
-- `config.paths.*` — пути до данных, чекпоинтов и submission.
+- `config.training.scoring` — метрика для classic ML;
+- `config.training.search_n_iter` — число итераций поиска;
+- `config.training.batch_size`, `num_epochs`, `lr`, `weight_decay` — параметры DNN;
+- `config.paths.*` — пути до данных, чекпоинтов, submission и leaderboard.
 
-### Примеры `model_name`
+Примеры `model_name`:
+- `DNN`
+- `RFC`
 - `LogR`
 - `LogR_l1`
 - `LogR_elasticnet`
 - `KNN`
-- `RFC`
 - `SVC`
 - `CatBC`
 - `GradBC`
 - `LGBMClf`
-- `DNN`
 - `Ensemble_AVG`
+- `Ensemble_voting`
+- `All`
+
+---
+
+## Установка
+
+```bash
+python -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+```
+
+---
 
 ## Как запускать
 
-### 1. Обучить одну модель
+### 1. Обучить одну classic-модель
 В `configs.py`:
 ```python
-config.training.model_name = 'LGBMClf'
-config.training.training_all_models = False
+config.training.model_name = 'LogR'
 ```
 
 Запуск:
 ```bash
-python main.py
+python3 main.py
 ```
 
-### 2. Обучить все classic-модели подряд
-В `configs.py`:
-```python
-config.training.training_all_models = True
-```
-
-### 3. Запустить DNN
+### 2. Обучить DNN
 В `configs.py`:
 ```python
 config.training.model_name = 'DNN'
 ```
 
-### 4. Запустить ансамбль усреднением
+Запуск:
+```bash
+python3 main.py
+```
+
+### 3. Обучить все classic-модели подряд
+В `configs.py`:
+```python
+config.training.model_name = 'All'
+```
+
+### 4. Построить ансамбль усреднением
 В `configs.py`:
 ```python
 config.training.model_name = 'Ensemble_AVG'
 ```
 
+### 5. Построить voting-ансамбль
+В `configs.py`:
+```python
+config.training.model_name = 'Ensemble_voting'
+```
+
+---
+
 ## Что сохраняется
 
-Проект сохраняет артефакты в `checkpoints/`:
-- classic ML-модели;
-- DNN-артефакты;
-- submission-файлы;
-- таблицу результатов / leaderboard.
+### Classic ML
+Сохраняются:
+- обученная sklearn-модель;
+- submission-файл;
+- запись в `leaderboard.csv`.
 
-Типичный pipeline после запуска:
-1. обучение модели;
-2. сохранение лучшего артефакта;
-3. предсказание на `test.csv`;
-4. запись submission в папку `checkpoints/submission/`.
+### DNN
+Сохраняются:
+- `model_state_dict`;
+- `FeatureEngineer`;
+- `preprocessor`;
+- metadata модели (`input_size`, `output_size`, `dropout` и др.);
+- submission-файл.
+
+---
 
 ## Логирование результатов
 
-Для сравнения экспериментов используется простая таблица результатов.
+Проект ведёт таблицу результатов в:
+- `checkpoints/leaderboard.csv`
 
-Рекомендуемые поля:
-- `created_at`
-- `experiment_name`
-- `model_name`
-- `score`
-- `params`
+Туда пишутся, как минимум:
+- дата и время запуска;
+- имя эксперимента;
+- имя модели;
+- итоговый score;
+- параметры запуска.
 
-Идея такая:
-- для classic ML в `score` писать `best_score_` из `RandomizedSearchCV`;
-- для DNN — среднюю CV-метрику;
-- в `params` хранить строку со словарём гиперпараметров.
+Дополнительно проект может логировать эксперименты через `wandb`.
 
-## Как устроен preprocessing
+---
 
-Feature engineering вынесен отдельно в `src/features.py`.
+## Ноутбуки
 
-Дальше признаки проходят через sklearn pipeline:
-- числовые — imputing + scaling;
-- категориальные — encoding;
-- затем данные идут в модель.
+В `notebooks/` лежат:
+- `EDA_RESULTS.ipynb` — разведочный анализ;
+- `project_all_in_one.ipynb` — ранняя all-in-one версия проекта;
+- `result.ipynb` — ноутбук с результатами экспериментов;
+- `df_report.html` и `df_fe_report.html` — отчёты по данным и признакам.
 
-Для DNN используется отдельная ветка подготовки данных через `get_loaders(...)`.
+---
 
-## Текущий workflow
+## Ближайшие идеи для развития
 
-### Classic ML
-`main.py` → `src/classic_runner.py` → обучение → сохранение модели → предсказание на test.
+- добавить stacking;
+- аккуратно проверить DNN с embedding для категориальных признаков;
+- сделать честную OOF-оценку для ансамблей;
+- усилить сравнение моделей через единый leaderboard;
+- добавить базовые тесты на `FeatureEngineer`, preprocessing и inference.
 
-### DNN
-`main.py` → `src/dnn_runner.py`:
-- `run_NN()` — CV;
-- `fit_final_dnn()` — финальное обучение на всём train;
-- `predict_test_dnn()` — submission.
 
-### Ensemble
-`main.py` → `src/ensemble.py` → загрузка обученных моделей → усреднение вероятностей → submission.
-
-## Что можно улучшать дальше
-
-- добавить OOF-оценку для ансамблей;
-- сделать stacking;
-- добавить embeddings для категориальных признаков в DNN;
-- улучшить логирование экспериментов;
-- добавить более аккуратное README с примерами метрик и leaderboard.
-
-## Быстрый старт
-
-Если нужен самый быстрый запуск:
-1. положить `train.csv` и `test.csv` в папку `data/`;
-2. выбрать `model_name` в `configs.py`;
-3. запустить `python main.py`;
-4. взять submission из `checkpoints/submission/`.
