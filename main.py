@@ -1,57 +1,50 @@
 from configs import config
 from src.utils import set_seed, make_dirs
-from src.classic_runner import train
+from src.classic_runner import train_classic
 from src.dnn_runner import  run_NN, fit_final_dnn, predict_test_dnn
-from src.search_spaces import param_grid
 from src.ensemble import average_proba_ensemble, voting_ensemble
 
-def fit(config):
+CLASSIC_MODEL_NAMES = [
+    "RFC",
+    "LogR",
+    "LogR_l1",
+    "LogR_elasticnet",
+    "KNN",
+    "SVC",
+    "CatBC",
+    "GradBC",
+    # "LGBMClf",
+]
+
+
+def fit():
     set_seed(config.general.seed)
     make_dirs()
-    if config.training.model_name == 'All':
-        for model_name in param_grid:
-            config.training.model_name = model_name
-            if config.training.model_name != 'DNN':
-                train()
-            elif config.training.model_name != 'Ensemble_AVG':
-                models_name = [
-                    'CatBC_v2',
-                    'LogR_v2',
-                    'KNN_v2',
-                    'RFC_v2',
-                ]
 
-                average_proba_ensemble(models_name)
-            else:
-                cv_result = run_NN()
-                final_artifact = fit_final_dnn(cv_result)
-                predict_test_dnn(final_artifact)
-    else:
-        if config.training.model_name == 'Ensemble_AVG':
-            models_name = [
-                'CatBC_v2',
-                'LogR_v2',
-                'KNN_v2',
-                'RFC_v2',
-            ]
-            average_proba_ensemble(models_name)
-        elif config.training.model_name == 'Ensemble_voting':
-            models_name=[
-                'CatBC_v2',
-                'LogR_v2',
-                'KNN_v2',
-                'RFC_v2',
-                'DNN_v2',
-                'GradBC_v2',
-            ]
-            voting_ensemble(models_name)
-        elif config.training.model_name != 'DNN':
-            train()
-        else:
-            cv_result = run_NN()
-            final_artifact = fit_final_dnn(cv_result)
-            predict_test_dnn(final_artifact)
+    model_name = config.training.model_name
+
+    if model_name == 'All':
+        for classic_name in CLASSIC_MODEL_NAMES:
+            config.training.model_name = classic_name
+            train_classic()
+        return
+    
+    if model_name == "Ensemble_AVG":
+        average_proba_ensemble(["CatBC_v2", "LogR_v2", "KNN_v2", "RFC_v2"])
+        return
+    
+    if model_name == "Ensemble_voting":
+        voting_ensemble(["CatBC_v2", "LogR_v2", "KNN_v2", "RFC_v2", "DNN_v2", "GradBC_v2"])
+        return
+    
+    if model_name == "DNN":
+        cv_result = run_NN()
+        final_artifact = fit_final_dnn(cv_result)
+        predict_test_dnn(final_artifact)
+        return
+
+    train_classic()
         
         
 if __name__ == '__main__':
-    fit(config)
+    fit()

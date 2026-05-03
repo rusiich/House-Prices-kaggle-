@@ -1,27 +1,36 @@
 import  pandas as pd
-from src.features import FeatureEngineer, FORCE_CATEGORICAL, FORCE_NUMERICAL, FORCE_ORDINAL
+from src.features import FeatureEngineer
 from src.pipeline import build_preprocessor
 import torch
 from torch.utils.data import DataLoader, TensorDataset
 from configs import config
+from src.schema import FORCE_CATEGORICAL, FORCE_NUMERICAL, FORCE_ORDINAL, ID_COLUMN, TARGET_COLUMN
 
+
+
+# --------- чтение данных ---------
+def get_train_data():
+    df = pd.read_csv(config.paths.path_to_train_data)
+    X = df.drop(columns=[TARGET_COLUMN])
+    y = df[TARGET_COLUMN]
+    return X, y
+
+def get_test_data():
+    return pd.read_csv(config.paths.path_to_test_data)
 
 def get_data(test_data=False):
-    
-    path = config.paths.path_to_test_data if test_data else  config.paths.path_to_train_data
+    return get_test_data() if test_data else get_train_data()
 
-    data = pd.read_csv(path)
-    if 'Survived' in data.columns:
-        X = data.drop('Survived', axis=1)
-        y = data['Survived']
-
-        assert 'Survived' not in X.columns
-        return X, y
-    
-    return data
-
-
-def get_loaders(X_train_df, y_train, X_val=None, y_val=None, fe=None, prepr=None, batch_size=config.training.batch_size):
+# --------- создание загручиков ---------
+def get_loaders(
+        X_train_df, 
+        y_train, 
+        X_val=None, 
+        y_val=None, 
+        fe=None, 
+        prepr=None, 
+        batch_size=config.training.batch_size
+        ):
     
     if fe is None:
         fe = FeatureEngineer()

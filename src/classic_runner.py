@@ -2,7 +2,7 @@
 from configs import config
 from sklearn.model_selection import StratifiedKFold, RandomizedSearchCV
 from src.pipeline import build_pipeline
-from src.features import get_feature_groups
+from src.schema import get_feature_groups
 from src.search_spaces import get_param_grid
 import pandas as pd
 from src.utils import save_classic_model,  get_device, log_result
@@ -15,7 +15,7 @@ import wandb
 
 device = get_device()
 
-def train():
+def train_classic():
     print(f"start training {config.training.model_name}")
     if config.logging.use_wandb:
         wandb.init(
