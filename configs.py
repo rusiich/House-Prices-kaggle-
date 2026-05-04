@@ -25,8 +25,10 @@ config = {
     
     'training': {
         # --- Общие ---
-        # from src.pipeline: 'All' 'Ensemble_AVG' 'Ensemble_voting' 'DNN' 'Linear'
-        'model_name': 'Linear',  
+        # from src.pipeline: 'All' 'Ensemble_AVG' 'Ensemble_voting' 'DNN' 
+        #  'RandomForest' 'GradientBoosting' 'CatBoost' 'KNN'
+        # 'Linear' 'Ridge'  'Lasso' 'ElasticNet'
+        'model_name': 'CatBoost',  
         'test_size': 0.2,
         'scoring': 'neg_root_mean_squared_error',
         # 'training_all_models':True,

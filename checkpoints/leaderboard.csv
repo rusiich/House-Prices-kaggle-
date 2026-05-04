@@ -1,3 +1,5 @@
 created_at,experiment_name,model_name,score,params,scoring,seed
-2026-05-04T14:35:58.346635,test,Linear,-51159.95233300656,"{'preprocessor__num': StandardScaler(), 'models__fit_intercept': True, 'models': LinearRegression()}",neg_root_mean_squared_error,1027309
-2026-05-04T14:38:45.706116,test,Linear,-41791.64424947047,"{'preprocessor__num': StandardScaler(), 'models__fit_intercept': True, 'models': LinearRegression()}",neg_root_mean_squared_error,1027309
+2026-05-04T15:41:20.220479,test,Ridge,-0.151153683870949,"{'preprocessor__num__scaler': StandardScaler(), 'models__fit_intercept': True, 'models__alpha': 0.1, 'models': Ridge(random_state=1027309)}",neg_root_mean_squared_error,1027309
+2026-05-04T15:42:02.526143,test,Lasso,-0.13775395009521998,"{'preprocessor__num__scaler': StandardScaler(), 'models__fit_intercept': True, 'models__alpha': 0.001, 'models': Lasso(max_iter=10000, random_state=1027309)}",neg_root_mean_squared_error,1027309
+2026-05-04T15:42:36.702206,test,ElasticNet,-1.3606773929554077,"{'preprocessor__num__scaler': RobustScaler(), 'models__l1_ratio': 0.9, 'models__fit_intercept': False, 'models__alpha': 1.0, 'models': ElasticNet(max_iter=10000, random_state=1027309)}",neg_root_mean_squared_error,1027309
+2026-05-04T15:44:09.679708,test,CatBoost,-0.11957379910004576,"{'preprocessor__num__scaler': 'passthrough', 'models__subsample': 1.0, 'models__learning_rate': 0.1, 'models__iterations': 1900, 'models__depth': 4, 'models': CatBoostRegressor(loss_function='RMSE', random_state=1027309, verbose=0)}",neg_root_mean_squared_error,1027309

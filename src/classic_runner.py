@@ -9,8 +9,10 @@ from src.utils import save_classic_model,  get_device, log_result
 from src.data import get_data
 from datetime import datetime
 
+
 import os
 import wandb
+import numpy as np
 
 
 
@@ -32,6 +34,8 @@ def train_classic():
         print("wandb run started")
 
     X, y = get_data()
+
+    y = np.log(y)
 
     cv = KFold(n_splits=5, shuffle=True, random_state=config.general.seed)
     ohe_columns, ord_columns, num_columns = get_feature_groups()
@@ -90,13 +94,12 @@ def predict_test(randomized_search):
 
     best_model = randomized_search.best_estimator_
     y_pred = best_model.predict(test_df)
+    y_pred = np.exp(y_pred)
 
     submission_df = pd.DataFrame({
         ID_COLUMN: passenger_ids,
         TARGET_COLUMN: y_pred,
     })
-    if not os.path.exists(config.paths.path_to_submission):
-        os.makedirs(config.paths.path_to_submission, exist_ok=True)
         
     name = f"{config.training.model_name}_{config.general.experiment_name}_prediction.csv"
     submission_df.to_csv(config.paths.path_to_submission / name, index=False)

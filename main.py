@@ -5,15 +5,14 @@ from src.dnn_runner import  run_NN, fit_final_dnn, predict_test_dnn
 from src.ensemble import average_proba_ensemble, voting_ensemble
 
 CLASSIC_MODEL_NAMES = [
-    "RFC",
-    "LogR",
-    "LogR_l1",
-    "LogR_elasticnet",
-    "KNN",
-    "SVC",
-    "CatBC",
-    "GradBC",
-    # "LGBMClf",
+    'RandomForest', 
+    'GradientBoosting', 
+    'CatBoost', 
+    'KNN',
+    'Linear', 
+    'Ridge',  
+    'Lasso', 
+    'ElasticNet',
 ]
 
 
