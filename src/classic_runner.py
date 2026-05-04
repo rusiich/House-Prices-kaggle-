@@ -1,15 +1,17 @@
 
 from configs import config
-from sklearn.model_selection import StratifiedKFold, RandomizedSearchCV
+from sklearn.model_selection import  RandomizedSearchCV, KFold
 from src.pipeline import build_pipeline
-from src.schema import get_feature_groups
+from src.schema import get_feature_groups, TARGET_COLUMN, ID_COLUMN
 from src.search_spaces import get_param_grid
 import pandas as pd
 from src.utils import save_classic_model,  get_device, log_result
 from src.data import get_data
 from datetime import datetime
+
 import os
 import wandb
+
 
 
 
@@ -31,7 +33,7 @@ def train_classic():
 
     X, y = get_data()
 
-    cv = StratifiedKFold(n_splits=5, shuffle=True, random_state=config.general.seed)
+    cv = KFold(n_splits=5, shuffle=True, random_state=config.general.seed)
     ohe_columns, ord_columns, num_columns = get_feature_groups()
     pipe_final = build_pipeline(ohe_columns, ord_columns, num_columns)
     param_grid = get_param_grid(model_name=config.training.model_name)
@@ -84,14 +86,14 @@ def train_classic():
 
 def predict_test(randomized_search):
     test_df = get_data(test_data=True)
-    passenger_ids = test_df["PassengerId"]
+    passenger_ids = test_df[ID_COLUMN]
 
     best_model = randomized_search.best_estimator_
     y_pred = best_model.predict(test_df)
 
     submission_df = pd.DataFrame({
-        "PassengerId": passenger_ids,
-        "Survived": y_pred,
+        ID_COLUMN: passenger_ids,
+        TARGET_COLUMN: y_pred,
     })
     if not os.path.exists(config.paths.path_to_submission):
         os.makedirs(config.paths.path_to_submission, exist_ok=True)

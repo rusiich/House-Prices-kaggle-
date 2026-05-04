@@ -7,9 +7,9 @@ BASE_DIR = Path(__file__).resolve().parent
 
 config = {
     'general': {
-        'experiment_name': ' test',
+        'experiment_name': 'test',
         'seed': 0xFACED,
-        'num_classes': 2, 
+        'num_classes': 1, 
     },
 
     'paths': {
@@ -25,9 +25,10 @@ config = {
     
     'training': {
         # --- Общие ---
-        'model_name': 'DNN',  # from src.pipeline: 'All' 'Ensemble_AVG' 'Ensemble_voting' 'DNN' 'RFC' 'LogR' 'LogR_l1' 'LogR_elasticnet' 'KNN' 'SVC' 'CatBC' 'GradBC' 'LGBMClf'
+        # from src.pipeline: 'All' 'Ensemble_AVG' 'Ensemble_voting' 'DNN' 'Linear'
+        'model_name': 'Linear',  
         'test_size': 0.2,
-        'scoring': 'accuracy',
+        'scoring': 'neg_root_mean_squared_error',
         # 'training_all_models':True,
 
         # --- Search / CV ---

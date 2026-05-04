@@ -1,32 +1,34 @@
 """Схема признаков и базовые константы проекта."""
 
-TARGET_COLUMN = "Survived"
-ID_COLUMN = "PassengerId"
+TARGET_COLUMN = "SalePrice"
+ID_COLUMN = "Id"
+
+DROP_COLUMNS = [
+    "Id",
+    'Alley',
+]
 
 FORCE_CATEGORICAL = [
-    "Sex",
-    "Embarked",
-    "Cabin",
-    "Pclass",
-    "Title",
-    "AgeGroup",
+    'MSZoning', 'Street',  'LotShape', 'LandContour', 'Utilities',
+    'LotConfig', 'LandSlope', 'Neighborhood', 'Condition1', 'Condition2',
+    'BldgType', 'HouseStyle', 'RoofStyle', 'RoofMatl', 'Exterior1st',
+    'Exterior2nd',  'ExterQual', 'ExterCond', 'Foundation',
+    'BsmtQual', 'BsmtCond', 'BsmtExposure', 'BsmtFinType1', 'BsmtFinType2',
+    'Heating', 'HeatingQC', 'CentralAir', 'Electrical', 'KitchenQual',
+    'Functional', 'FireplaceQu', 'GarageType', 'GarageFinish', 'GarageQual',
+    'GarageCond', 'PavedDrive', 'PoolQC', 'Fence', 'MiscFeature',
+    'SaleType', 'SaleCondition'
 ]
 
 FORCE_NUMERICAL = [
-    "Age",
-    "Age_was_missing",
-    "Fare",
-    "Fare_log",
-    "Parch",
-    "SibSp",
-    "Family",
-    "Fare_per_person",
-    "Age_class",
-    "Fare_class",
-    "Name_length",
-    "WomanOrChild",
-    "Is_alone",
-    "Big_family",
+    'MSSubClass', 'LotFrontage', 'LotArea', 'OverallQual',
+    'OverallCond', 'YearBuilt', 'YearRemodAdd', 'MasVnrArea', 'BsmtFinSF1',
+    'BsmtFinSF2', 'BsmtUnfSF', 'TotalBsmtSF', '1stFlrSF', '2ndFlrSF',
+    'LowQualFinSF', 'GrLivArea', 'BsmtFullBath', 'BsmtHalfBath', 'FullBath',
+    'HalfBath', 'BedroomAbvGr', 'KitchenAbvGr', 'TotRmsAbvGrd',
+    'Fireplaces', 'GarageYrBlt', 'GarageCars', 'GarageArea', 'WoodDeckSF',
+    'OpenPorchSF', 'EnclosedPorch', '3SsnPorch', 'ScreenPorch', 'PoolArea',
+    'MiscVal', 'MoSold', 'YrSold'
 ]
 
 FORCE_ORDINAL: list[str] = []

@@ -5,7 +5,7 @@ from sklearn.impute import SimpleImputer
 from sklearn.preprocessing import OneHotEncoder, OrdinalEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
 
 from src.features import FeatureEngineer
@@ -16,13 +16,13 @@ RANDOM_STATE = config.general.seed
 def build_preprocessor(ohe_columns, ord_columns, num_columns):
 
   ohe_pipe = Pipeline(
-    [('simpleImputer_ohe', SimpleImputer(missing_values=np.nan, strategy='most_frequent')),
+    [('simpleImputer_ohe', SimpleImputer(missing_values=np.nan, strategy='constant', fill_value='Unknown')),
      ('ohe', OneHotEncoder(drop=None, handle_unknown='ignore'))
     ]
     )
   
   ord_pipe = Pipeline(
-    [('simpleImputer_before_ord', SimpleImputer(missing_values=np.nan, strategy='most_frequent')),
+    [('simpleImputer_before_ord', SimpleImputer(missing_values=np.nan, strategy='constant', fill_value='Unknown')),
      ('ord',  OrdinalEncoder(
                 categories=[
                     [1, 2, 3],
@@ -41,9 +41,10 @@ def build_preprocessor(ohe_columns, ord_columns, num_columns):
   )
 
   data_preprocessor = ColumnTransformer(
-      [('ohe', ohe_pipe, ohe_columns),
-      ('ord', ord_pipe, ord_columns),
-      ('num', num_pipe, num_columns)
+      [
+        ('ohe', ohe_pipe, ohe_columns),
+        ('ord', ord_pipe, ord_columns),
+        ('num', num_pipe, num_columns)
       ],
       remainder='drop'
   )
@@ -59,7 +60,7 @@ def build_pipeline(ohe_columns, ord_columns, num_columns):
       ('feature_engineer', FeatureEngineer()),
       ('preprocessor', data_preprocessor),
       # ('feature_selection', SelectKBest(score_func=f_classif, k=20)),
-      ('models', RandomForestClassifier(random_state=RANDOM_STATE)),
+      ('models', RandomForestRegressor(random_state=RANDOM_STATE)),
   ])
   return pipe_final
 
