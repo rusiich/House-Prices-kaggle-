@@ -1,12 +1,13 @@
 
 from configs import config
-from sklearn.model_selection import StratifiedKFold
+from sklearn.model_selection import KFold
 import pandas as pd
 from src.utils import  save_NN_model, get_device, log_result
-from src.metrics import compute_accuracy
+from src.metrics import compute_accuracy, compute_rmse
 import torch
 from src.data import get_data, get_loaders
 from src.model import DNN
+from src.schema import ID_COLUMN, TARGET_COLUMN
 import torch.nn as nn
 import numpy as np
 import copy
@@ -21,15 +22,13 @@ def train_model(model, train_loader, val_loader, loss, optimizer,scheduler=None,
     loss_history = []
     train_history = []
     val_history = []
-    best_val_accuracy = -1
+    best_val_metric = float("inf")
     best_epoch = -1
     best_model_state = None
     for epoch in range(num_epochs):
         model.train() # Enter train mode
 
         loss_accum = 0
-        correct_samples = 0
-        total_samples = 0
         for i_step, (x, y) in enumerate(train_loader):
             x = x.to(device)
             y = y.to(device)
@@ -39,35 +38,31 @@ def train_model(model, train_loader, val_loader, loss, optimizer,scheduler=None,
             loss_value.backward()
             optimizer.step()
 
-            _, indices = torch.max(prediction, 1)
-            correct_samples += (indices == y).sum().item()
-            total_samples += y.shape[0]
-
             loss_accum += loss_value.item()
 
         ave_loss = loss_accum / (i_step + 1)
-        train_accuracy = float(correct_samples) / total_samples
-        val_accuracy = compute_accuracy(model, val_loader)
+        train_rmse = compute_rmse(model, train_loader)
+        val_rmse = compute_rmse(model, val_loader)
 
-        if val_accuracy > best_val_accuracy:
-            best_val_accuracy = val_accuracy
+        if val_rmse < best_val_metric:
+            best_val_metric = val_rmse
             best_epoch = epoch + 1
             best_model_state = copy.deepcopy(model.state_dict())
 
         loss_history.append(float(ave_loss))
-        train_history.append(train_accuracy)
-        val_history.append(val_accuracy)
+        train_history.append(train_rmse)
+        val_history.append(val_rmse)
 
         if scheduler is not None:
-            scheduler.step(val_accuracy)
+            scheduler.step(val_rmse)
 
-        print("Average loss: %f, Train accuracy: %f, Val accuracy: %f" % (ave_loss, train_accuracy, val_accuracy))
+        print("Average loss: %f, Train rrmse: %f, Val rmse: %f" % (ave_loss, train_rmse, val_rmse))
 
     return {
                 "loss_history": loss_history,
                 "train_history": train_history,
                 "val_history": val_history,
-                "best_val_accuracy": best_val_accuracy,
+                "best_val_metric": best_val_metric,
                 "best_epoch": best_epoch,
                 "best_model_state": best_model_state,
             }
@@ -77,6 +72,7 @@ def train_model(model, train_loader, val_loader, loss, optimizer,scheduler=None,
 def fit_final_dnn(cv_result):
 
     X, y = get_data()
+    y = np.log(y)
 
     loader, input_size, fe, prepr = get_loaders(X, y, )
     
@@ -87,7 +83,7 @@ def fit_final_dnn(cv_result):
         ).to(device)
     
     num_epochs = round(cv_result["mean_best_epoch"])
-    loss = nn.CrossEntropyLoss()
+    loss = nn.MSELoss()
     optimizer = torch.optim.Adam(
         model.parameters(), 
         lr=config.training.lr, 
@@ -127,8 +123,9 @@ def fit_final_dnn(cv_result):
 def run_NN():
     print('start DNN model training')
     X, y = get_data()
+    y = np.log(y)
 
-    skf = StratifiedKFold(
+    skf = KFold(
         n_splits=5,
         shuffle=True,
         random_state=config.general.seed
@@ -137,7 +134,7 @@ def run_NN():
 
     fold_results = []
     best_fold_result = None
-    best_fold_acc = -1
+    best_fold_metric = float("inf")
 
     for fold, (train_idx, val_idx) in enumerate(skf.split(X, y), 1):
         X_train_fold = X.iloc[train_idx].copy()
@@ -158,7 +155,7 @@ def run_NN():
                 p_dropout=config.training.p_dropout,
                 ).to(device)
         
-        loss = nn.CrossEntropyLoss()
+        loss = nn.MSELoss()
         optimizer = torch.optim.Adam(
                             model.parameters(), 
                             lr=config.training.lr,
@@ -167,7 +164,7 @@ def run_NN():
 
         scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
             optimizer,
-            mode='max',
+            mode='min',
             factor=config.training.scheduler_factor,
             patience=config.training.scheduler_patience
         )
@@ -185,27 +182,27 @@ def run_NN():
         fold_result = {
             "fold": fold,
             "input_size": input_size,
-            "best_val_accuracy": train_result["best_val_accuracy"],
+            "best_val_metric": train_result["best_val_metric"],
             "best_epoch": train_result["best_epoch"],
             "best_model_state": train_result["best_model_state"],
         }
         fold_results.append(fold_result)
 
-        if best_fold_acc < fold_result["best_val_accuracy"] :
-            best_fold_acc = fold_result["best_val_accuracy"]
+        if best_fold_metric > fold_result["best_val_metric"] :
+            best_fold_metric = fold_result["best_val_metric"]
             best_fold_result = {
                 **fold_result,
                 "fe": fe,
                 "prepr": prepr,
             }
             
-        print(f"Fold {fold}: best_acc={fold_result['best_val_accuracy']:.4f}, best_epoch={fold_result['best_epoch']}")
+        print(f"Fold {fold}: best_rmse={fold_result['best_val_metric']:.4f}, best_epoch={fold_result['best_epoch']}")
 
-    accuracies = []
+    metrics = []
     epochs = []
 
     for fold in fold_results:
-        accuracies.append(fold['best_val_accuracy'])
+        metrics.append(fold['best_val_metric'])
         epochs.append(fold['best_epoch'])
     
     dnn_params = {
@@ -223,7 +220,7 @@ def run_NN():
         "created_at": datetime.now().isoformat(),
         "experiment_name": config.general.experiment_name,
         "model_name": config.training.model_name,
-        "score": np.mean(accuracies),
+        "score": np.mean(metrics),
         "params": dnn_params,
         "scoring": config.training.scoring,
         "seed": config.general.seed,       
@@ -234,8 +231,8 @@ def run_NN():
         
     return {
         "fold_results": fold_results,
-        "cv_mean_accuracy": np.mean(accuracies),
-        "cv_std_accuracy": np.std(accuracies),
+        "cv_mean_rmse": np.mean(metrics),
+        "cv_std_rmse": np.std(metrics),
         "mean_best_epoch": np.mean(epochs),
         "best_fold_result": best_fold_result,
     }
@@ -243,12 +240,14 @@ def run_NN():
     
 def predict_test_dnn(artifact):
     test_df = get_data(test_data=True)
-    passenger_ids = test_df["PassengerId"]
+    passenger_ids = test_df[ID_COLUMN]
 
     fe = artifact['fe']
     prepr = artifact['prepr']
     X = fe.transform(test_df)
     X = prepr.transform(X)
+    X = X.toarray() if hasattr(X, "toarray") else X
+
 
     X = torch.tensor(X, dtype=torch.float32).to(device)
 
@@ -262,16 +261,14 @@ def predict_test_dnn(artifact):
     model.eval()
 
     with torch.no_grad(): 
-        logits = model(X)
-        preds = logits.argmax(dim=1).cpu().numpy()
+        preds = model(X).squeeze().cpu().numpy()
+    
+    preds = np.exp(preds)
 
     submission_df = pd.DataFrame({
-        "PassengerId": passenger_ids,
-        "Survived": preds.astype(int),
+        ID_COLUMN: passenger_ids,
+        TARGET_COLUMN: preds,
     })
-
-    if not os.path.exists(config.paths.path_to_submission):
-        os.makedirs(config.paths.path_to_submission, exist_ok=True)
         
     name = f"{config.training.model_name}_{config.general.experiment_name}_prediction.csv"
     submission_df.to_csv(config.paths.path_to_submission / name, index=False)

@@ -9,8 +9,6 @@ from src.utils import save_classic_model,  get_device, log_result
 from src.data import get_data
 from datetime import datetime
 
-
-import os
 import wandb
 import numpy as np
 

@@ -40,11 +40,12 @@ def get_loaders(
 
     X_train = fe.fit_transform(X_train_df)
     X_train = prepr.fit_transform(X_train)
+    X_train = X_train.toarray() if hasattr(X_train, "toarray") else X_train
 
     input_size = X_train.shape[1]
 
     X_train_tensor = torch.tensor(X_train, dtype=torch.float32)
-    y_train_tensor = torch.tensor(y_train.to_numpy(), dtype=torch.long)
+    y_train_tensor = torch.tensor(y_train.to_numpy(), dtype=torch.float32).reshape(-1, 1)
 
     train_dataset = TensorDataset(X_train_tensor, y_train_tensor)
 
@@ -57,8 +58,10 @@ def get_loaders(
     if X_val is not None:
         X_val = fe.transform(X_val)
         X_val = prepr.transform(X_val)
+        X_val = X_val.toarray() if hasattr(X_val, "toarray") else X_val
         X_val_tensor = torch.tensor(X_val, dtype=torch.float32)
-        y_val_tensor = torch.tensor(y_val.to_numpy(), dtype=torch.long)
+
+        y_val_tensor = torch.tensor(y_val.to_numpy(), dtype=torch.float32).reshape(-1, 1)
         val_dataset = TensorDataset(X_val_tensor, y_val_tensor)
         val_loader = DataLoader(
             val_dataset,

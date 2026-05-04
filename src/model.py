@@ -19,7 +19,7 @@ class DNN(nn.Module):
             out = 2 ** (num_layers - n) * output_size
             layers.extend([
                 nn.Linear(inp, out),
-                nn.BatchNorm1d(out),
+                # nn.BatchNorm1d(out),
                 nn.ReLU(),
                 nn.Dropout(p_dropout)
             ])

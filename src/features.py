@@ -1,15 +1,10 @@
 from sklearn.base import BaseEstimator, TransformerMixin
-import numpy as np
-import pandas as pd
 from src.schema import DROP_COLUMNS
 
 class FeatureEngineer(BaseEstimator, TransformerMixin):
 
     def fit(self, X, y=None):
         X = X.copy()
-
-
-
         return self
 
     def transform(self, X):
@@ -19,7 +14,4 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
         X['MasVnrArea'] = X['MasVnrArea'].fillna(0)
         X['GarageYrBlt'] = X['GarageYrBlt'].fillna(-1)
         X = X.drop(columns=DROP_COLUMNS)
-
-        
-
         return X

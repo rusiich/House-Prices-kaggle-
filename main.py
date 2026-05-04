@@ -3,6 +3,7 @@ from src.utils import set_seed, make_dirs
 from src.classic_runner import train_classic
 from src.dnn_runner import  run_NN, fit_final_dnn, predict_test_dnn
 from src.ensemble import average_proba_ensemble, voting_ensemble
+from src.search_spaces import get_random_param_DNN
 
 CLASSIC_MODEL_NAMES = [
     'RandomForest', 
@@ -41,6 +42,37 @@ def fit():
         final_artifact = fit_final_dnn(cv_result)
         predict_test_dnn(final_artifact)
         return
+    
+
+    if model_name == "DNN_RANDOM":
+        used_params = set()
+        count = 0
+
+        while count < config.training.search_n_iter:
+            conf = get_random_param_DNN()
+
+            params_key = (
+                conf.training.num_layers,
+                conf.training.hidden_dim,
+                conf.training.p_dropout,
+                conf.training.batch_size,
+                conf.training.num_epochs,
+                conf.training.lr,
+                conf.training.weight_decay,
+            )
+
+            if params_key in used_params:
+                continue
+            print(params_key)
+
+            used_params.add(params_key)
+            count += 1
+
+            cv_result = run_NN()
+            final_artifact = fit_final_dnn(cv_result)
+            predict_test_dnn(final_artifact)
+            return    
+
 
     train_classic()
         

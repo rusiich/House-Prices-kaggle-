@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent
 
 config = {
     'general': {
-        'experiment_name': 'test',
+        'experiment_name': 'v1',
         'seed': 0xFACED,
         'num_classes': 1, 
     },
@@ -35,19 +35,19 @@ config = {
 
         # --- Search / CV ---
         'search_verbose': 1,
-        'search_n_iter': 1,
+        'search_n_iter': 50,
         'search_n_jobs': 3,
 
         # --- DNN: architecture ---
-        'num_layers': 3, 
-        'output_size': 2,
-        'p_dropout': 0.5,
+        'num_layers': 5, 
+        'output_size': 1,
+        'p_dropout': 0,
 
         # --- DNN: optimization ---
-        'batch_size': 128,
+        'batch_size': 16,
         'num_epochs': 100,
         'lr': 0.01,
-        'weight_decay': 0,
+        'weight_decay': 1e-5,
 
         # --- DNN: scheduler / early stopping ---
         'scheduler_factor': 0.5,

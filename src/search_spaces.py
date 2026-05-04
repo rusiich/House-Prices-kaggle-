@@ -1,4 +1,5 @@
-
+import random
+import pprint
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor
 from sklearn.neighbors import KNeighborsRegressor
 from sklearn.linear_model import LinearRegression, Lasso, Ridge, ElasticNet
@@ -8,6 +9,7 @@ from sklearn.preprocessing import StandardScaler, MinMaxScaler, RobustScaler
 # from lightgbm import LGBMRegressor
 from catboost import CatBoostRegressor
 from configs import config
+
 
 RANDOM_STATE = config.general.seed
 
@@ -74,13 +76,19 @@ param_grid = {
         'preprocessor__num__scaler': ['passthrough']
     },
 
-    'CatBoost': 
-    {
-        'models': [CatBoostRegressor(random_state=RANDOM_STATE, verbose=0)],
-        'models__iterations': range(100, 2000, 100),
-        'models__learning_rate': [0.01, 0.5, 0.1, 0.2],
-        'models__depth': [4, 6, 8, 10],
-        'models__subsample': [0.7, 1.0],
+    'CatBoost': {
+        'models': [CatBoostRegressor(
+            random_state=RANDOM_STATE,
+            verbose=0,
+            loss_function='RMSE'
+        )],
+        'models__iterations': [1000, 2000, 4000, 6000],
+        'models__learning_rate': [0.01, 0.03, 0.05, 0.1],
+        'models__depth': [4, 5, 6, 7, 8],
+        'models__l2_leaf_reg': [1, 3, 5, 7, 10],
+        'models__random_strength': [0, 1, 2, 5],
+        'models__subsample': [0.66, 0.8, 1.0],
+        'models__rsm': [0.7, 0.9, 1.0],
         'preprocessor__num__scaler': ['passthrough']
     },
   
@@ -104,14 +112,40 @@ param_grid = {
     #     'models__colsample_bytree': [0.7, 1.0],
     #     'preprocessor__num': [StandardScaler(), MinMaxScaler(), 'passthrough']
     # },
-
-
-    
     'DNN':
     {
-      
+       
+    },
+
+    
+    'DNN_RANDOM': 
+    {
+        'num_layers': [2, 3, 4, 5, 6],
+        'hidden_dim': [64, 128, 256],
+        'p_dropout': [0.0,  0.2, ],
+        'batch_size': [16, 32, 64, 128],
+        'num_epochs': [200],
+        'lr': [1e-2, 3e-3, 1e-3],
+        'weight_decay': [0.0, 1e-5],
     }
 }
 
 def get_param_grid(model_name='LogisticRegression'):
   return [param_grid[model_name]]
+
+def get_random_param_DNN():
+    params = get_param_grid(model_name='DNN_RANDOM')[0]
+
+
+    config.training.num_layers = random.choice(params['num_layers'])
+    config.training.hidden_dim = random.choice(params['hidden_dim'])
+    config.training.p_dropout = random.choice(params['p_dropout'])
+    config.training.batch_size = random.choice(params['batch_size'])
+    config.training.num_epochs = random.choice(params['num_epochs'])
+    config.training.lr = random.choice(params['lr'])
+    config.training.weight_decay = random.choice(params['weight_decay'])
+
+    print(config.training)
+
+    return config
+
