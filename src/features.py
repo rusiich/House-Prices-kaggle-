@@ -1,5 +1,6 @@
 from sklearn.base import BaseEstimator, TransformerMixin
-from src.schema import DROP_COLUMNS
+from src.schema import DROP_COLUMNS, LOG_FEATURES
+import numpy as np
 
 class FeatureEngineer(BaseEstimator, TransformerMixin):
 
@@ -13,5 +14,10 @@ class FeatureEngineer(BaseEstimator, TransformerMixin):
         X['LotFrontage'] = X['LotFrontage'].fillna(0)
         X['MasVnrArea'] = X['MasVnrArea'].fillna(0)
         X['GarageYrBlt'] = X['GarageYrBlt'].fillna(-1)
-        X = X.drop(columns=DROP_COLUMNS)
+        X = X.drop(columns=DROP_COLUMNS, errors="ignore")
+
+        for col in LOG_FEATURES:
+            if col in X.columns:
+                X[col] = np.log1p(X[col])
+
         return X

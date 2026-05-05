@@ -7,9 +7,11 @@ from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.ensemble import RandomForestRegressor
 from sklearn.preprocessing import StandardScaler
+from sklearn.feature_selection import SelectKBest, f_regression
 
 from src.features import FeatureEngineer
 from configs import config
+from src.schema import ORDINAL_CATEGORIES, FORCE_ORDINAL
 
 RANDOM_STATE = config.general.seed
 
@@ -22,12 +24,11 @@ def build_preprocessor(ohe_columns, ord_columns, num_columns):
     )
   
   ord_pipe = Pipeline(
-    [('simpleImputer_before_ord', SimpleImputer(missing_values=np.nan, strategy='constant', fill_value='Unknown')),
+    [('simpleImputer_before_ord', SimpleImputer(missing_values=np.nan, strategy='constant', fill_value='NA')),
      ('ord',  OrdinalEncoder(
-                categories=[
-                    [1, 2, 3],
-                ],
-                handle_unknown='use_encoded_value', unknown_value=np.nan
+                categories=[ORDINAL_CATEGORIES[col] for col in FORCE_ORDINAL],
+                handle_unknown='use_encoded_value', 
+                unknown_value=np.nan
             )
         ),
      ('simpleImputer_after_ord', SimpleImputer(missing_values=np.nan, strategy='most_frequent'))
@@ -59,7 +60,7 @@ def build_pipeline(ohe_columns, ord_columns, num_columns):
   pipe_final = Pipeline([
       ('feature_engineer', FeatureEngineer()),
       ('preprocessor', data_preprocessor),
-      # ('feature_selection', SelectKBest(score_func=f_classif, k=20)),
+      # ('feature_selection', SelectKBest(score_func=f_regression, k=20)),
       ('models', RandomForestRegressor(random_state=RANDOM_STATE)),
   ])
   return pipe_final

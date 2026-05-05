@@ -7,7 +7,7 @@ BASE_DIR = Path(__file__).resolve().parent
 
 config = {
     'general': {
-        'experiment_name': 'v1',
+        'experiment_name': 'v3',
         'seed': 0xFACED,
         'num_classes': 1, 
     },
@@ -28,7 +28,7 @@ config = {
         # from src.pipeline: 'All' 'Ensemble_AVG' 'Ensemble_voting' 'DNN' 
         #  'RandomForest' 'GradientBoosting' 'CatBoost' 'KNN'
         # 'Linear' 'Ridge'  'Lasso' 'ElasticNet'
-        'model_name': 'CatBoost',  
+        'model_name': 'All',  
         'test_size': 0.2,
         'scoring': 'neg_root_mean_squared_error',
         # 'training_all_models':True,

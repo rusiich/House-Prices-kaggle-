@@ -5,12 +5,13 @@ import pandas as pd
 import numpy as np
 import torch
 from src.model import DNN
+from src.schema import ID_COLUMN, TARGET_COLUMN
 
 def average_proba_ensemble(models_name: list, weight:list = None):
     test_df = get_data(test_data=True)
-    passenger_ids = test_df["PassengerId"]
+    passenger_ids = test_df[ID_COLUMN]
 
-    X_test = test_df.drop(columns=["PassengerId"], errors="ignore")
+    X_test = test_df.drop(columns=[ID_COLUMN], errors="ignore")
 
     preds=[]
     
@@ -36,8 +37,8 @@ def average_proba_ensemble(models_name: list, weight:list = None):
     pred = (pred_proba >= 0.5).astype(int)
 
     submission_df = pd.DataFrame({
-        "PassengerId": passenger_ids,
-        "Survived": pred,
+        ID_COLUMN: passenger_ids,
+        TARGET_COLUMN: pred,
     })
     name = f"average_proba_ensemble_{config.general.experiment_name}_prediction.csv"
     submission_df.to_csv(config.paths.path_to_submission / name, index=False)
@@ -109,3 +110,41 @@ def voting_ensemble(models_name: list):
     return submission_df
     
 
+def average_ensemble(models_name: list, weight:list = None):
+    test_df = get_data(test_data=True)
+    passenger_ids = test_df[ID_COLUMN]
+
+    X_test = test_df.drop(columns=[ID_COLUMN], errors="ignore")
+
+    preds=[]
+    
+    for model_name in models_name:
+        name = f"{model_name}.joblib"
+        model_path = config.paths.path_to_classic_model / name  
+        rs = joblib.load(model_path)
+        best_model = rs.best_estimator_ if hasattr(rs, "best_estimator_") else rs
+        preds.append(best_model.predict(X_test))
+    
+    preds = np.array(preds)
+
+    if weight is None:
+        preds= preds.mean(axis=0)
+    else:
+        weight = np.asarray(weight, dtype=float)
+
+        assert len(weight)==len(models_name)
+        assert np.isclose(weight.sum(),1.0)
+
+        preds= np.average(preds, axis=0, weights=weight)
+
+    preds = np.exp(preds)
+
+
+    submission_df = pd.DataFrame({
+        ID_COLUMN: passenger_ids,
+        TARGET_COLUMN: preds,
+    })
+    name = f"average_ensemble_{config.general.experiment_name}_prediction.csv"
+    submission_df.to_csv(config.paths.path_to_submission / name, index=False)
+    print('average_ensemble_ensemble')
+    return submission_df

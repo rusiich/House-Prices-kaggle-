@@ -14,12 +14,19 @@ from configs import config
 RANDOM_STATE = config.general.seed
 
 param_grid = {
-    'RandomForest':
-    {
-        'models': [RandomForestRegressor(random_state=RANDOM_STATE)],
-        'models__n_estimators': range(50, 300, 50),
-        'models__max_depth': range(3, 15, 3),
-        'preprocessor__num__scaler': ['passthrough']
+    'RandomForest': {
+        'models': [RandomForestRegressor(
+            random_state=RANDOM_STATE,
+        )],
+        'models__n_estimators': [200, 400, 800, 1200],
+        'models__max_depth': [None, 8, 12, 16, 24],
+        'models__max_features': [1.0, 'sqrt', 0.5, 0.7],
+        'models__min_samples_split': [2, 5, 10, 20],
+        'models__min_samples_leaf': [1, 2, 4, 8],
+        'models__bootstrap': [True],
+        'models__max_samples': [None, 0.7, 0.85],
+        'preprocessor__num__scaler': ['passthrough'],
+        # 'feature_selection__k': range(30, 80, 10),
     },
 
     'Linear':
@@ -27,7 +34,8 @@ param_grid = {
     {
         'models': [LinearRegression()],
         'models__fit_intercept': [True, False],
-        'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler()]
+        'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler()],
+        # 'feature_selection__k': range(30, 80, 10),
     },
 
     'Ridge': {
@@ -39,7 +47,8 @@ param_grid = {
             MinMaxScaler(),
             RobustScaler(),
             'passthrough'
-        ]
+        ],
+        # 'feature_selection__k': range(30, 80, 10),
     },
 
     'Lasso': {
@@ -50,7 +59,8 @@ param_grid = {
             StandardScaler(),
             MinMaxScaler(),
             RobustScaler()
-        ]
+        ],
+        # 'feature_selection__k': range(30, 80, 10),
     },
 
     'ElasticNet': {
@@ -62,18 +72,25 @@ param_grid = {
             StandardScaler(),
             MinMaxScaler(),
             RobustScaler()
-        ]
+        ],
+        # 'feature_selection__k': range(30, 80, 10),
     },
 
-    'GradientBoosting':
-
-    {
-        'models': [GradientBoostingRegressor(random_state=RANDOM_STATE)],
-        'models__n_estimators': range(100, 1000, 100),
-        'models__learning_rate': [0.01, 0.5, 0.1, 0.2],
-        'models__max_depth': [3, 5, 7],
-        'models__subsample': [0.7, 1.0],
-        'preprocessor__num__scaler': ['passthrough']
+    'GradientBoosting': {
+        'models': [GradientBoostingRegressor(
+            random_state=RANDOM_STATE,
+            criterion='friedman_mse'
+        )],
+        'models__loss': ['squared_error', 'huber'],
+        'models__n_estimators': [300, 500, 800, 1200, 1600],
+        'models__learning_rate': [0.01, 0.03, 0.05, 0.1],
+        'models__max_depth': [2, 3, 4, 5],
+        'models__subsample': [0.7, 0.85, 1.0],
+        'models__min_samples_leaf': [1, 3, 5, 10],
+        'models__min_samples_split': [2, 5, 10, 20],
+        'models__max_features': [None, 'sqrt', 0.7],
+        'preprocessor__num__scaler': ['passthrough'],
+        # 'feature_selection__k': range(30, 80, 10),
     },
 
     'CatBoost': {
@@ -89,7 +106,8 @@ param_grid = {
         'models__random_strength': [0, 1, 2, 5],
         'models__subsample': [0.66, 0.8, 1.0],
         'models__rsm': [0.7, 0.9, 1.0],
-        'preprocessor__num__scaler': ['passthrough']
+        'preprocessor__num__scaler': ['passthrough'],
+        # 'feature_selection__k': range(30, 80, 10),
     },
   
     'KNN': 
@@ -98,7 +116,8 @@ param_grid = {
         'models__n_neighbors': [3, 5, 7, 9, 15],
         'models__weights': ['uniform', 'distance'],
         'models__p': [1, 2],
-        'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler()]
+        'preprocessor__num__scaler': [StandardScaler(), MinMaxScaler()],
+        # 'feature_selection__k': range(30, 80, 10),
     },
 
     # 'LGBM':
