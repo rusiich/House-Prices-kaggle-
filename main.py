@@ -9,7 +9,7 @@ import time
 CLASSIC_MODEL_NAMES = [
     'RandomForest', 
     'GradientBoosting', 
-    'CatBoost', 
+    # 'CatBoost', 
     'KNN',
     'Linear', 
     'Ridge',  
@@ -37,12 +37,15 @@ def fit():
     if model_name == "Ensemble_AVG":
         average_ensemble(
             [
-                "CatBoost_v1", 
-                'Linear_v1', 
-                'KNN_v1', 
-                'GradientBoosting_v1', 
-                'RandomForest_v1'],
-                weight=[0.5, 0.1, 0.1, 0.1, 0.2,]
+                "CatBoost_v4", 
+                'Linear_v4', 
+                'Ridge_v4',  
+                'Lasso_v4', 
+                'ElasticNet_v4',
+                # 'KNN_v4', 
+                'GradientBoosting_v4', 
+                'RandomForest_v4'],
+                # weight=[0.4, 0.15, 0.05, 0.2, 0.2,]
             )
         return
     

@@ -7,11 +7,11 @@ BASE_DIR = Path(__file__).resolve().parent
 
 config = {
     'general': {
-        'experiment_name': 'v3',
+        'experiment_name': 'v4',
         'seed': 0xFACED,
         'num_classes': 1, 
     },
-
+    # --- PATHS ---
     'paths': {
         'path_to_train_data': BASE_DIR / 'data' / 'train.csv',
         'path_to_test_data': BASE_DIR / 'data' / 'test.csv',
@@ -28,15 +28,14 @@ config = {
         # from src.pipeline: 'All' 'Ensemble_AVG' 'Ensemble_voting' 'DNN' 
         #  'RandomForest' 'GradientBoosting' 'CatBoost' 'KNN'
         # 'Linear' 'Ridge'  'Lasso' 'ElasticNet'
-        'model_name': 'All',  
+        'model_name': 'Ensemble_AVG',  
         'test_size': 0.2,
         'scoring': 'neg_root_mean_squared_error',
-        # 'training_all_models':True,
 
         # --- Search / CV ---
         'search_verbose': 1,
         'search_n_iter': 50,
-        'search_n_jobs': 3,
+        'search_n_jobs': -1,
 
         # --- DNN: architecture ---
         'num_layers': 5, 
